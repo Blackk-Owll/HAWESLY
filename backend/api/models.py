@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 
 # models 
@@ -15,7 +15,7 @@ class Wilaya(models.Model):
 class Commune(models.Model):
     communeId = models.AutoField(primary_key=True)
     nom=models.CharField(max_length=100)
-    wilaya=models.ForeignKey(Wilaya ,on_delete=models.SET_NULL)
+    wilaya=models.ForeignKey(Wilaya ,on_delete=models.CASCADE)
         
     def __str__(self) -> str:
         return self.nom 
@@ -27,7 +27,7 @@ class User(models.Model):
     password = models.CharField(max_length=100)
     nom=models.CharField(max_length=200)
     prenom=models.CharField(max_length=200)
-    phone=models.DecimalField()
+    phone=models.DecimalField(max_digits=10,decimal_places=10)
     
     def __str__(self) -> str:
          return self.username 
@@ -40,7 +40,7 @@ class Type(models.Model):
 
 class Photo(models.Model):
     photoId = models.AutoField(primary_key=True)
-    url=models.ImageField(_(""), upload_to=None, height_field=None, width_field=None, max_length=None)
+    url=models.CharField(max_length=500)
     
     def __str__(self) -> str:
         return self.url
@@ -59,13 +59,13 @@ class Annonce(models.Model):
     prix=models.IntegerField
     wilaya=models.ForeignKey(Wilaya, on_delete=models.CASCADE)
     commune=models.ForeignKey(Commune, on_delete=models.CASCADE)
-    adresse=models.CharField(_(""), max_length=500)
+    adresse=models.CharField(max_length=500)
     categorie = models.CharField(
-        max_length="3",
+        max_length=3,
         choices=Categorie.choices,
         default=Categorie.VENTE,)
     type=models.ForeignKey(Type, on_delete=models.CASCADE)
-    date=models.DateField.auto_now_add(auto_now=True)
+    date=models.DateField(auto_now=True)
     mapX=models.IntegerField()
     mapY=models.IntegerField()
     zoom=models.FloatField()
@@ -84,7 +84,7 @@ class Position(models.Model):
 class Favori(models.Model):
     favoriId=models.AutoField(primary_key=True)
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    annonce=models.ForeignKey(Annonce , on_delete=models.SET_NULL)
+    annonce=models.ForeignKey(Annonce , on_delete=models.CASCADE)
 
 class MessgeOffre(models.Model):
     messgeOffreId=models.AutoField(primary_key=True)
@@ -94,5 +94,5 @@ class MessgeOffre(models.Model):
 
 class Admin(models.Model):
     adminId=models.AutoField(primary_key=True)
-    email=models.EmailField(_(""), max_length=254)( max_length=100)
+    email=models.EmailField(max_length=100)
     mdps=models.CharField( max_length=200)

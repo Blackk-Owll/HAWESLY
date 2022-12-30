@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'api',
 
     #third party apps
-    'rest-framework',
+    'rest_framework',
     'corsheaders',
 ]
 

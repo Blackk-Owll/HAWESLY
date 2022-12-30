@@ -1,2 +1,2 @@
 # TP_IGL
-application web pour les annonces des Bien immobilières avec react et django
+application web pour les annonces des biens immobilières avec react et django

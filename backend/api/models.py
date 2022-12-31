@@ -45,11 +45,9 @@ class Photo(models.Model):
     def __str__(self) -> str:
         return self.url
 
-class Categorie(models.TextChoices):
-        VENTE = 'VNT', _('vente')
-        ACHANGE = 'ECG', _('echange')
-        LOCATION = 'LCT', _('locatio')
-        LOCATION_VACANCE = 'LCV', _('location pour vacance')
+class Categorie(models.Model):
+        categorieId = models.AutoField(primary_key=True)
+        label=models.CharField(max_length=200)
 
 class Annonce(models.Model):
 
@@ -60,10 +58,7 @@ class Annonce(models.Model):
     wilaya=models.ForeignKey(Wilaya, on_delete=models.CASCADE)
     commune=models.ForeignKey(Commune, on_delete=models.CASCADE)
     adresse=models.CharField(max_length=500)
-    categorie = models.CharField(
-        max_length=3,
-        choices=Categorie.choices,
-        default=Categorie.VENTE,)
+    categorie =models.ForeignKey(Categorie, on_delete=models.DO_NOTHING)
     type=models.ForeignKey(Type, on_delete=models.CASCADE)
     date=models.DateField(auto_now=True)
     mapX=models.IntegerField()

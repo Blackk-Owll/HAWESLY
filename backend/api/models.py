@@ -86,7 +86,6 @@ class MessgeOffre(models.Model):
     Annonce=models.ForeignKey(Annonce, on_delete=models.CASCADE)
     emetteur=models.ForeignKey(User, on_delete=models.DO_NOTHING)    
 
-
 class Admin(models.Model):
     adminId=models.AutoField(primary_key=True)
     email=models.EmailField(max_length=100)

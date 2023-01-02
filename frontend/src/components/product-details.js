@@ -6,7 +6,7 @@ import ProductDetails from './shop-components/shop-details';
 import CallToActionV1 from './section-components/call-to-action-v1';
 import Footer from './global-components/footer';
 
-import {useState, useEffect} from 'react';
+
 
 // iport useCintext to run to pass params throw components 
 

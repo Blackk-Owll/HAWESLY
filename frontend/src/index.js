@@ -52,8 +52,8 @@ import ErrorPage from './components/404';
 class Root extends Component {
     render() {
         return(
-                <HashRouter basename="/">
-	                <div>
+                
+	                <div id = "App">
 	                <Router>
 	                    <Route exact path="/" component={HomeV1} />
                         <Route path="/home-v2" component={HomeV2} />
@@ -106,11 +106,11 @@ class Root extends Component {
                         <Route path="*" component={ ErrorPage } /> 
 	                </ Router>
 	                </div>
-                </HashRouter>
+              
         )
     }
 }
 
 export default Root;
 
-ReactDOM.render(<Root />, document.getElementById('quarter'));
+ReactDOM.render(<Root />, document.getElementById('root'));

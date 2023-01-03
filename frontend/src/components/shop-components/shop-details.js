@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import parse from 'html-react-parser';
 
+// implementation de la logique de requetes api 
+
+
 class ShopDetails extends Component {
 
     render() {

@@ -38,7 +38,7 @@ class Banner extends Component {
 				                </div>
 				              </div>
 				              <div className="slide-item-img">
-				                <img src={publicUrl+"/assets/img/slider/21.png"} alt="#" />
+				                <img src={publicUrl+"assets/img/slider/21.jpg"} alt="#" />
 				              </div>
 				            </div>
 				          </div>

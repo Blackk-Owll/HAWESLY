@@ -62,51 +62,51 @@ class Root extends Component {
         <Router>
           <Routes>
             <Route exact path="/" element={<HomeV1 />} />
-            <Route path="/home-v2" element={<HomeV2 />} />
-            <Route path="/home-v3" element={<HomeV3 />} />
-            <Route path="/home-v4" element={<HomeV4 />} />
-            <Route path="/home-v5" element={<HomeV5 />} />
-            <Route path="/home-v6" element={<HomeV6 />} />
-            <Route path="/home-v7" element={<HomeV7 />} />
-            <Route path="/home-v8" element={<HomeV8 />} />
-            <Route path="/home-v9" element={<HomeV9 />} />
-            <Route path="/home-v10" element={<HomeV10 />} />
+            <Route exact path="/home-v2" element={<HomeV2 />} />
+            <Route exact path="/home-v3" element={<HomeV3 />} />
+            <Route exact path="/home-v4" element={<HomeV4 />} />
+            <Route exact path="/home-v5" element={<HomeV5 />} />
+            <Route exact path="/home-v6" element={<HomeV6 />} />
+            <Route exact path="/home-v7" element={<HomeV7 />} />
+            <Route exact path="/home-v8" element={<HomeV8 />} />
+            <Route exact path="/home-v9" element={<HomeV9 />} />
+            <Route exact path="/home-v10" element={<HomeV10 />} />
 
-            <Route path="/about" element={<About />} />
-            <Route path="/service" element={<Service />} />
-            <Route path="/service-details" element={<ServiceDetails />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/portfolio-v2" element={<PortfolioV2 />} />
-            <Route path="/portfolio-details" element={<PortfolioDetails />} />
-            <Route path="/team" element={<Team />} />
-            <Route path="/team-details" element={<TeamDetails />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/coming-soon" element={<ComingSoon />} />
-            <Route path="/404" element={<Error />} />
-            <Route path="/location" element={<Location />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/shop-grid" element={<ShopGrid />} />
-            <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
-            <Route path="/shop-right-sidebar" element={<ShopRightSidebar />} />
+            <Route exact path="/about" element={<About />} />
+            <Route exact path="/service" element={<Service />} />
+            <Route exact path="/service-details" element={<ServiceDetails />} />
+            <Route exact path="/portfolio" element={<Portfolio />} />
+            <Route exact path="/portfolio-v2" element={<PortfolioV2 />} />
+            <Route exact path="/portfolio-details" element={<PortfolioDetails />} />
+            <Route exact path="/team" element={<Team />} />
+            <Route exact path="/team-details" element={<TeamDetails />} />
+            <Route exact path="/faq" element={<Faq />} />
+            <Route exact path="/coming-soon" element={<ComingSoon />} />
+            <Route exact path="/404" element={<Error />} />
+            <Route exact path="/location" element={<Location />} />
+            <Route exact path="/shop" element={<Shop />} />
+            <Route exact path="/shop-grid" element={<ShopGrid />} />
+            <Route exact path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
+            <Route exact path="/shop-right-sidebar" element={<ShopRightSidebar />} />
 
-            <Route path="/product-details" element={<ProdductDetails />} />
+            <Route exact path='/product-details/:id' element={<ProdductDetails />} />
             {/* blog */}
-            <Route path="/blog-grid" element={<BlogGrid />} />
-            <Route path="/blog-left-sidebar" element={<BlogLeftSidebar />} />
-            <Route path="/blog-right-sidebar" element={<BlogRightSidebar />} />
-            <Route path="/blog" element={<Blog />} />
+            <Route exact path="/blog-grid" element={<BlogGrid />} />
+            <Route exact path="/blog-left-sidebar" element={<BlogLeftSidebar />} />
+            <Route exact path="/blog-right-sidebar" element={<BlogRightSidebar />} />
+            <Route exact path="/blog" element={<Blog />} />
 
-            <Route path="/blog-details" element={<BlogDetails />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/my-account" element={<MyAccount />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/add-listing" element={<AddListing />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/order-tracking" element={<OrderTracking />} />
-            <Route path="/history" element={<History />} />
+            <Route exact path="/blog-details" element={<BlogDetails />} />
+            <Route exact path="/contact" element={<Contact />} />
+            <Route exact path="/cart" element={<Cart />} />
+            <Route exact path="/checkout" element={<Checkout />} />
+            <Route exact path="/my-account" element={<MyAccount />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/add-listing" element={<AddListing />} />
+            <Route exact path="/wishlist" element={<Wishlist />} />
+            <Route exact path="/order-tracking" element={<OrderTracking />} />
+            <Route exact path="/history" element={<History />} />
 
             <Route path="*" element={<ErrorPage />} />
           </Routes>
@@ -120,7 +120,7 @@ export default Root;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+
     <Root />
-  </React.StrictMode>
+
 );

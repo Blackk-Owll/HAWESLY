@@ -15,7 +15,11 @@ class WilayaAdmin(admin.ModelAdmin):
 
     admin.site.register(Wilaya)
 
+class UserAdmin(admin.ModelAdmin):
+    list = ('userId', 'username','email','password','nom','prenom','phone')
 
+    admin.site.register(User)
+    
 class TypeAdmin(admin.ModelAdmin):
     list = ('typeId', 'type')
 
@@ -35,7 +39,7 @@ class CategorieAdmin(admin.ModelAdmin):
 
 
 class AnnonceAdmin(admin.ModelAdmin):
-    list = ('annonceId', 'user', 'description','prix','wilaya','commune','adresse','categorie','type','date','mapX','mapY','zoom')
+    list = ('annonceId', 'user', 'description','prix','surface','wilaya','commune','adresse','categorie','type','date','mapX','mapY','zoom')
 
     admin.site.register(Annonce)
 

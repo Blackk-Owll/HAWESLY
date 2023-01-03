@@ -1,5 +1,5 @@
 from api.views import *
-from rest_framework.routers import DefaultRouter
+
 from api import views
 from rest_framework import routers
 

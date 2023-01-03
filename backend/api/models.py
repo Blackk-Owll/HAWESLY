@@ -27,7 +27,7 @@ class User(models.Model):
     password = models.CharField(max_length=100)
     nom=models.CharField(max_length=200)
     prenom=models.CharField(max_length=200)
-    phone=models.DecimalField(max_digits=10,decimal_places=10)
+    phone=models.IntegerField()
     
     def __str__(self) -> str:
          return self.username 
@@ -54,7 +54,8 @@ class Annonce(models.Model):
     annonceId = models.AutoField(primary_key=True)
     user  = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
-    prix=models.IntegerField
+    prix=models.IntegerField()
+    surface=models.FloatField(default=0)
     wilaya=models.ForeignKey(Wilaya, on_delete=models.CASCADE)
     commune=models.ForeignKey(Commune, on_delete=models.CASCADE)
     adresse=models.CharField(max_length=500)

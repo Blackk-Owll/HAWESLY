@@ -16,7 +16,7 @@ class Wilaya(models.Model):
 class Commune(models.Model):
     communeId = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
-    wilaya = models.ForeignKey(Wilaya, on_delete=models.CASCADE)
+    wilaya = models.ForeignKey(Wilaya, on_delete=models.DO_NOTHING)
 
     def __str__(self) -> str:
         return self.nom
@@ -29,6 +29,9 @@ class User(models.Model):
     password = models.CharField(max_length=100)
     nom = models.CharField(max_length=200)
     prenom = models.CharField(max_length=200)
+    wilaya = models.ForeignKey(Wilaya, on_delete=models.DO_NOTHING )
+    commune = models.ForeignKey(Commune, on_delete=models.DO_NOTHING)
+    adresse=models.CharField(_(""), max_length=50)
     phone = models.IntegerField()
 
     def __str__(self) -> str:
@@ -59,6 +62,7 @@ class Categorie(models.Model):
 class Annonce(models.Model):
 
     annonceId = models.AutoField(primary_key=True)
+    titre=models.CharField(max_length=300)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
     prix = models.IntegerField()
@@ -99,6 +103,7 @@ class MessgeOffre(models.Model):
     messgeOffreId = models.AutoField(primary_key=True)
     Annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)
     emetteur = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    contenu = models.TextField(_(""))
 
 
 class Admin(models.Model):

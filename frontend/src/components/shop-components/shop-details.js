@@ -2,78 +2,118 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import parse from "html-react-parser";
 import { useState, useEffect, useContext } from "react";
+import { toast } from "react-toastify";
 
 // implementation de la logique de requetes api
 import API from "../../API";
 import { useParams } from "react-router-dom";
 
 function ShopDetails() {
-  // recuperer le id de l'annonce et ses details 
+  // recuperer le id de l'annonce et ses details
 
   let publicUrl = process.env.PUBLIC_URL + "/";
+
   const [annonce, setAnnonce] = useState({});
   const [categorie, setCategorie] = useState("");
   const [type, setType] = useState("");
   const [wilaya, setWilaya] = useState("");
   const [commune, setCommune] = useState("");
+  // les info du contact
   const [user, setUser] = useState({});
-
-
+  const [userWilaya, setUserWilaya] = useState("");
+  const [userCommune, setUserCommune] = useState("");
+  const [userId, setUserId] = useState(0);
   // on recuperer le id passé evec le lien
-  
-  let idAnnonce =useParams().id;
-  console.log(idAnnonce);
-  
 
+  let idAnnonce = useParams().id;
+
+  // charger l'annonce au chergemetn de la page
   useEffect(() => {
     // recupere l'annonce
     refrechAnnonce();
-	console.log(annonce);
+    console.log(annonce);
   }, []);
-
-  useEffect(() => {
-    // recupere le categorie et type
-     API.get(`/categories/${annonce.categorie}`).then((res) => {
-      setCategorie(res.data.label);
-	  console.log(res.data.label);
-    });
-    API.get(`/types/${annonce.type}`).then((res) => {
-      setType(res.data.type);
-	  console.log(res.data.type);
-    });
-	API.get(`/wilayas/${annonce.wilaya}`).then((res) => {
-		setWilaya(res.data.nom);
-		console.log(res.data);
-		
-	  });
-	  API.get(`/communes/${annonce.commune}`).then((res) => {
-		setCommune(res.data.nom);
-		console.log(res.data.nom);
-		
-	  });
-  }, [annonce]);
-
   function refrechAnnonce() {
     API.get(`/annonces/${idAnnonce}`).then((res) => {
       setAnnonce(res.data);
-	 
     });
-	
   }
 
+  useEffect(() => {
+    if (annonce !== null)
+      // recupere les chemps externe en texte
+      API.get(`/categories/${annonce.categorie}`).then((res) => {
+        setCategorie(res.data.label);
+        // console.log(res.data.label);
+      });
 
-  //--------- envois des messsage d'offre && commentaires 
-  const [message, setMessage] = useState("");
+    API.get(`/types/${annonce.type}`).then((res) => {
+      setType(res.data.type);
+      // console.log(res.data.type);
+    });
+
+    API.get(`/wilayas/${annonce.wilaya}`).then((res) => {
+      setWilaya(res.data.nom);
+      // console.log(res.data);
+    });
+
+    API.get(`/communes/${annonce.commune}`).then((res) => {
+      setCommune(res.data.nom);
+      // console.log(res.data.nom);
+    });
+
+    // recuperé le propriètaire de l'annocnce
+    API.get(`/users/${annonce.user}`).then((res) => {
+      setUser(res.data);
+    });
+  }, [annonce]);
+
+  // charger l'asresse de l'annonceur
+  useEffect(() => {
+    API.get(`/wilayas/${user.wilaya}`).then((res) => {
+      setUserWilaya(res.data.nom);
+
+    });
+
+    API.get(`/communes/${user.commune}`).then((res) => {
+      setUserCommune(res.data.nom);
+     
+      setUserId(user.userId); 
+    });
+  }, [user]);
 
 
-function envoieMessage(){
+  //--------- envois des messsage d'offre && commentaires
+  const [contenu, setContenu] = useState("");
+  const [messageOffre, setMessageOffre] = useState({});
 
-	API.post(`/messageOffres/`,message )
+  const envoieMessage = (e) => {
+    e.preventDefault();
+    // l'emetteur sera l'utilisateur authentifié 
+    let emetteur = 1 ;
+    /*********************** */
 
-}
+    API.post(`/messagesOffres/`,{
+      "contenu": contenu,
+      "Annonce": idAnnonce,
+      "emetteur": emetteur,
+  }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        toast.success("Message d'offre envoyé avec succès !");
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
 
 
- /* function post_Annonce() {
+
+  /* function post_Annonce() {
     API.post(`/annonces/`, annonce).then((res) => {
       setAnnonce(res.data);
     });
@@ -107,16 +147,15 @@ function envoieMessage(){
                   </li>
                 </ul>
               </div>
-              <h1>Diamond Manor Apartment id = {annonce.annnonceId} </h1>
+              <h1>Diamond Manor Apartment id = {annonce.annonceId} </h1>
               <label>
                 <span className="ltn__secondary-color">
                   <i className="flaticon-pin" />
                 </span>{" "}
-                 { wilaya},  {commune} , {annonce.adresse}
+                {wilaya}, {commune} , {annonce.adresse}
               </label>
               <h4 className="title-2">Description</h4>
               <p>{annonce.description}</p>
-
               <h4 className="title-2">Details sur l' AI</h4>
               <div className="property-detail-info-list section-bg-1 clearfix mb-60">
                 <ul>
@@ -124,33 +163,15 @@ function envoieMessage(){
                     <label>Property ID:</label> <span>{annonce.annonceId}</span>
                   </li>
                   <li>
-                    <label>Home Area: </label> <span>{annonce.surface} m²</span>
-                  </li>
-                  <li>
-                    <label>Rooms:</label> <span>7</span>
-                  </li>
-                  <li>
-                    <label>Baths:</label> <span>2</span>
-                  </li>
-                  <li>
-                    <label>Year built:</label> <span>1992</span>
+                    <label>Surface: </label> <span>{annonce.surface} m²</span>
                   </li>
                 </ul>
                 <ul>
                   <li>
-                    <label>Lot Area:</label> <span>HZ29 </span>
+                    <label>Prix:</label> <span> {annonce.prix}</span>
                   </li>
                   <li>
-                    <label>Lot dimensions:</label> <span>120 sqft</span>
-                  </li>
-                  <li>
-                    <label>Beds:</label> <span>7</span>
-                  </li>
-                  <li>
-                    <label>Price:</label> <span> {annonce.prix}</span>
-                  </li>
-                  <li>
-                    <label>Property Status:</label> <span>{categorie}</span>
+                    <label>Mit pour</label> <span>{categorie}</span>
                   </li>
                 </ul>
               </div>
@@ -410,272 +431,9 @@ function envoieMessage(){
                   tabIndex={0}
                 />
               </div>
-             {/*} <h4 className="title-2">Floor Plans</h4>
+              {/*} <h4 className="title-2">Floor Plans</h4>
               {/* APARTMENTS PLAN AREA START */}
-              <div className="ltn__apartments-plan-area product-details-apartments-plan mb-60">
-                <div className="ltn__tab-menu ltn__tab-menu-3 ltn__tab-menu-top-right-- text-uppercase--- text-center---">
-                  <div className="nav">
-                    <a data-bs-toggle="tab" href="#liton_tab_3_1">
-                      First Floor
-                    </a>
-                    <a
-                      className="active show"
-                      data-bs-toggle="tab"
-                      href="#liton_tab_3_2"
-                    >
-                      Second Floor
-                    </a>
-                    <a data-bs-toggle="tab" href="#liton_tab_3_3">
-                      Third Floor
-                    </a>
-                    <a data-bs-toggle="tab" href="#liton_tab_3_4">
-                      Top Garden
-                    </a>
-                  </div>
-                </div>
-                <div className="tab-content">
-                  <div className="tab-pane fade" id="liton_tab_3_1">
-                    <div className="ltn__apartments-tab-content-inner">
-                      <div className="row">
-                        <div className="col-lg-7">
-                          <div className="apartments-plan-img">
-                            <img
-                              src={publicUrl + "assets/img/others/10.png"}
-                              alt="#"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-5">
-                          <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                            <h2>First Floor</h2>
-                            <p>
-                              Enimad minim veniam quis nostrud exercitation
-                              ullamco laboris. Lorem ipsum dolor sit amet cons
-                              aetetur adipisicing elit sedo eiusmod
-                              tempor.Incididunt labore et dolore magna aliqua.
-                              sed ayd minim veniam.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-lg-12">
-                          <div className="product-details-apartments-info-list  section-bg-1">
-                            <div className="row">
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Total Area</label>{" "}
-                                      <span>2800 Sq. Ft</span>
-                                    </li>
-                                    <li>
-                                      <label>Bedroom</label>{" "}
-                                      <span>150 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Belcony/Pets</label>{" "}
-                                      <span>Allowed</span>
-                                    </li>
-                                    <li>
-                                      <label>Lounge</label>{" "}
-                                      <span>650 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="tab-pane fade active show" id="liton_tab_3_2">
-                    <div className="ltn__product-tab-content-inner">
-                      <div className="row">
-                        <div className="col-lg-7">
-                          <div className="apartments-plan-img">
-                            <img
-                              src={publicUrl + "assets/img/others/10.png"}
-                              alt="#"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-5">
-                          <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                            <h2>Second Floor</h2>
-                            <p>
-                              Enimad minim veniam quis nostrud exercitation
-                              ullamco laboris. Lorem ipsum dolor sit amet cons
-                              aetetur adipisicing elit sedo eiusmod
-                              tempor.Incididunt labore et dolore magna aliqua.
-                              sed ayd minim veniam.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-lg-12">
-                          <div className="product-details-apartments-info-list  section-bg-1">
-                            <div className="row">
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Total Area</label>{" "}
-                                      <span>2800 Sq. Ft</span>
-                                    </li>
-                                    <li>
-                                      <label>Bedroom</label>{" "}
-                                      <span>150 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Belcony/Pets</label>{" "}
-                                      <span>Allowed</span>
-                                    </li>
-                                    <li>
-                                      <label>Lounge</label>{" "}
-                                      <span>650 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="tab-pane fade" id="liton_tab_3_3">
-                    <div className="ltn__product-tab-content-inner">
-                      <div className="row">
-                        <div className="col-lg-7">
-                          <div className="apartments-plan-img">
-                            <img
-                              src={publicUrl + "assets/img/others/10.png"}
-                              alt="#"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-5">
-                          <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                            <h2>Third Floor</h2>
-                            <p>
-                              Enimad minim veniam quis nostrud exercitation
-                              ullamco laboris. Lorem ipsum dolor sit amet cons
-                              aetetur adipisicing elit sedo eiusmod
-                              tempor.Incididunt labore et dolore magna aliqua.
-                              sed ayd minim veniam.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-lg-12">
-                          <div className="product-details-apartments-info-list  section-bg-1">
-                            <div className="row">
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Total Area</label>{" "}
-                                      <span>2800 Sq. Ft</span>
-                                    </li>
-                                    <li>
-                                      <label>Bedroom</label>{" "}
-                                      <span>150 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Belcony/Pets</label>{" "}
-                                      <span>Allowed</span>
-                                    </li>
-                                    <li>
-                                      <label>Lounge</label>{" "}
-                                      <span>650 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="tab-pane fade" id="liton_tab_3_4">
-                    <div className="ltn__product-tab-content-inner">
-                      <div className="row">
-                        <div className="col-lg-7">
-                          <div className="apartments-plan-img">
-                            <img
-                              src={publicUrl + "assets/img/others/10.png"}
-                              alt="#"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-5">
-                          <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                            <h2>Top Garden</h2>
-                            <p>
-                              Enimad minim veniam quis nostrud exercitation
-                              ullamco laboris. Lorem ipsum dolor sit amet cons
-                              aetetur adipisicing elit sedo eiusmod
-                              tempor.Incididunt labore et dolore magna aliqua.
-                              sed ayd minim veniam.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col-lg-12">
-                          <div className="product-details-apartments-info-list  section-bg-1">
-                            <div className="row">
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Total Area</label>{" "}
-                                      <span>2800 Sq. Ft</span>
-                                    </li>
-                                    <li>
-                                      <label>Bedroom</label>{" "}
-                                      <span>150 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                  <ul>
-                                    <li>
-                                      <label>Belcony/Pets</label>{" "}
-                                      <span>Allowed</span>
-                                    </li>
-                                    <li>
-                                      <label>Lounge</label>{" "}
-                                      <span>650 Sq. Ft</span>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>*/}
+
               {/* APARTMENTS PLAN AREA END */}
               <h4 className="title-2">Property Video</h4>
               <div
@@ -928,14 +686,16 @@ function envoieMessage(){
                       </div>
                     </div>
                     <div className="input-item input-item-textarea ltn__custom-icon">
-                      <textarea onChange={(e)=>setMessage(e.target.value)}
+                      <textarea
+                        onChange={(e) => setContenu(e.target.value)}
                         placeholder="Ecrivez vos commentaire et messages d'offres ...."
                         defaultValue={""}
                       />
                     </div>
-                   
+
                     <div className="btn-wrapper">
-                      <button  on click ={ envoieMessage}
+                      <button
+                        onClick={envoieMessage}
                         className="btn theme-btn-1 btn-effect-1 text-uppercase"
                         type="submit"
                       >
@@ -1139,11 +899,17 @@ function envoieMessage(){
           <div className="col-lg-4">
             <aside className="sidebar ltn__shop-sidebar ltn__right-sidebar---">
               {/* Author Widget */}
+              <h4 className="title-2">Contactez le propriétaire</h4>
               <div className="widget ltn__author-widget">
                 <div className="ltn__author-widget-inner text-center">
                   <img src={publicUrl + "assets/img/team/4.jpg"} alt="Image" />
-                  <h5>Rosalina D. Willaimson</h5>
-                  <small>Traveller/Photographer</small>
+                  <h5>
+                    {" "}
+                    {user.nom} {user.prenom}{" "}
+                  </h5>
+                  <small>
+                    Vous pouvez contactez le propriétaire pour négocier{" "}
+                  </small>
                   <div className="product-ratting">
                     <ul>
                       <li>
@@ -1177,57 +943,59 @@ function envoieMessage(){
                       </li>
                     </ul>
                   </div>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Veritatis distinctio, odio, eligendi suscipit reprehenderit
-                    atque.
-                  </p>
-                  <div className="ltn__social-media">
+                </div>
+                <div className="ltn__author-widget-inner text-left">
+                  <div className="property-detail-info-list section-bg-1 clearfix mb-60">
                     <ul>
                       <li>
-                        <a href="#" title="Facebook">
-                          <i className="fab fa-facebook-f" />
-                        </a>
+                        <label>
+                          <span className="ltn__secondary-color">
+                            <i className="icon-mail" />
+                          </span>
+
+                          <a href="mailto:example@example.com">
+                            {"  "}
+                            {user.email}
+                          </a>
+                        </label>
+                      </li>
+
+                      <li>
+                        <label>
+                          <p>
+                            <span className="ltn__secondary-color">
+                              <i className="icon-call" />
+                            </span>
+                            {"  "}
+                            <a href="tel:?'+user.phone+'">
+                              {" :" + " 0" + user.phone}
+                            </a>
+                          </p>
+                        </label>
                       </li>
                       <li>
-                        <a href="#" title="Twitter">
-                          <i className="fab fa-twitter" />
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" title="Linkedin">
-                          <i className="fab fa-linkedin" />
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" title="Youtube">
-                          <i className="fab fa-youtube" />
-                        </a>
+                        <label>
+                          <p>
+                            <span className="ltn__secondary-color">
+                              <i className="icon-placeholder" />
+                            </span>{" "}
+                            <a href="tel:+0123-456789">
+                              {"  "}
+                              {userWilaya} , {" " + userCommune} ,{" "}
+                              {" " + user.adresse}{" "}
+                            </a>
+                          </p>
+                        </label>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
-              {/* Search Widget */}
-              <div className="widget ltn__search-widget">
-                <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                  Search Objects
-                </h4>
-                <form action="#">
-                  <input
-                    type="text"
-                    name="search"
-                    placeholder="Search your keyword..."
-                  />
-                  <button type="submit">
-                    <i className="fas fa-search" />
-                  </button>
-                </form>
-              </div>
+
               {/* Form Widget */}
               <div className="widget ltn__form-widget">
                 <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                  Drop Messege For Book
+                  Drop Messege For HOUSLY
                 </h4>
                 <form action="#">
                   <input type="text" name="yourname" placeholder="Your Name*" />
@@ -1437,190 +1205,7 @@ function envoieMessage(){
                   </li>
                 </ul>
               </div>
-              {/* Popular Product Widget */}
-              <div className="widget ltn__popular-product-widget">
-                <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                  Popular Properties
-                </h4>
-                <div className="row ltn__popular-product-widget-active slick-arrow-1">
-                  {/* ltn__product-item */}
-                  <div className="col-12">
-                    <div className="ltn__product-item ltn__product-item-4 ltn__product-item-5 text-center---">
-                      <div className="product-img go-top">
-                        <Link to="/shop">
-                          <img
-                            src={publicUrl + "assets/img/product-3/6.jpg"}
-                            alt="#"
-                          />
-                        </Link>
-                        <div className="real-estate-agent">
-                          <div className="agent-img">
-                            <Link to="/team-details">
-                              <img
-                                src={publicUrl + "assets/img/blog/author.jpg"}
-                                alt="#"
-                              />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="product-info">
-                        <div className="product-price">
-                          <span>
-                            $349,00<label>/Month</label>
-                          </span>
-                        </div>
-                        <h2 className="product-title">
-                          <Link to="/shop">New Apartment Nice View</Link>
-                        </h2>
-                        <div className="product-img-location">
-                          <ul>
-                            <li>
-                              <Link to="/shop">
-                                <i className="flaticon-pin" /> Belmont Gardens,
-                                Chicago
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                        <ul className="ltn__list-item-2--- ltn__list-item-2-before--- ltn__plot-brief">
-                          <li>
-                            <span>3 </span>
-                            Bedrooms
-                          </li>
-                          <li>
-                            <span>2 </span>
-                            Bathrooms
-                          </li>
-                          <li>
-                            <span>3450 </span>
-                            square Ft
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  {/* ltn__product-item */}
-                  <div className="col-12">
-                    <div className="ltn__product-item ltn__product-item-4 ltn__product-item-5 text-center---">
-                      <div className="product-img">
-                        <a href="product-details.html">
-                          <img
-                            src={publicUrl + "assets/img/product-3/4.jpg"}
-                            alt="#"
-                          />
-                        </a>
-                        <div className="real-estate-agent">
-                          <div className="agent-img">
-                            <Link to="/team-details">
-                              <img
-                                src={publicUrl + "assets/img/blog/author.jpg"}
-                                alt="#"
-                              />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="product-info">
-                        <div className="product-price">
-                          <span>
-                            $349,00<label>/Month</label>
-                          </span>
-                        </div>
-                        <h2 className="product-title">
-                          <a href="product-details.html">
-                            New Apartment Nice View
-                          </a>
-                        </h2>
-                        <div className="product-img-location">
-                          <ul>
-                            <li>
-                              <a href="product-details.html">
-                                <i className="flaticon-pin" /> Belmont Gardens,
-                                Chicago
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                        <ul className="ltn__list-item-2--- ltn__list-item-2-before--- ltn__plot-brief">
-                          <li>
-                            <span>3 </span>
-                            Bedrooms
-                          </li>
-                          <li>
-                            <span>2 </span>
-                            Bathrooms
-                          </li>
-                          <li>
-                            <span>3450 </span>
-                            square Ft
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  {/* ltn__product-item */}
-                  <div className="col-12">
-                    <div className="ltn__product-item ltn__product-item-4 ltn__product-item-5 text-center---">
-                      <div className="product-img">
-                        <a href="product-details.html">
-                          <img
-                            src={publicUrl + "assets/img/product-3/5.jpg"}
-                            alt="#"
-                          />
-                        </a>
-                        <div className="real-estate-agent">
-                          <div className="agent-img">
-                            <Link to="/team-details">
-                              <img
-                                src={publicUrl + "assets/img/blog/author.jpg"}
-                                alt="#"
-                              />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="product-info">
-                        <div className="product-price">
-                          <span>
-                            $349,00<label>/Month</label>
-                          </span>
-                        </div>
-                        <h2 className="product-title">
-                          <a href="product-details.html">
-                            New Apartment Nice View
-                          </a>
-                        </h2>
-                        <div className="product-img-location">
-                          <ul>
-                            <li>
-                              <a href="product-details.html">
-                                <i className="flaticon-pin" /> Belmont Gardens,
-                                Chicago
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                        <ul className="ltn__list-item-2--- ltn__list-item-2-before--- ltn__plot-brief">
-                          <li>
-                            <span>3 </span>
-                            Bedrooms
-                          </li>
-                          <li>
-                            <span>2 </span>
-                            Bathrooms
-                          </li>
-                          <li>
-                            <span>3450 </span>
-                            square Ft
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  {/*  */}
-                </div>
-              </div>
+
               {/* Popular Post Widget */}
               <div className="widget ltn__popular-post-widget go-top">
                 <h4 className="ltn__widget-title ltn__widget-title-border-2">

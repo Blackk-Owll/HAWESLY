@@ -24,9 +24,7 @@ class Commune(models.Model):
 
 class User(models.Model):
     userId = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
-    password = models.CharField(max_length=100)
     nom = models.CharField(max_length=200)
     prenom = models.CharField(max_length=200)
     wilaya = models.ForeignKey(Wilaya, on_delete=models.DO_NOTHING )
@@ -75,7 +73,7 @@ class Annonce(models.Model):
     date = models.DateField(auto_now=True)
     mapX = models.IntegerField()
     mapY = models.IntegerField()
-    zoom = models.FloatField()
+    
 
     def __str__(self) -> str:
         return (str(self.annonceId))
@@ -102,7 +100,8 @@ class Favori(models.Model):
 class MessgeOffre(models.Model):
     messgeOffreId = models.AutoField(primary_key=True)
     Annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)
-    emetteur = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    emetteur = models.ForeignKey(User,related_name="client_user", on_delete=models.DO_NOTHING)
+    annonceur = models.ForeignKey(User, related_name="annonceur_user",on_delete=models.CASCADE)
     contenu = models.TextField(_(""))
 
 

@@ -62,8 +62,6 @@ class Root extends Component {
         <Router>
           <Routes>
             <Route exact path="/" element={<HomeV2 />} />
-           
-
             <Route exact path="/about" element={<About />} />
             <Route exact path="/service" element={<Service />} />
             <Route exact path="/service-details" element={<ServiceDetails />} />

@@ -56,8 +56,8 @@ class App extends Component {
 	             <div id="root">
               
 	                <Router>
-	                    <Route exact path="/" component={HomeV1} />
-                        <Route path="/home-v2" component={HomeV2} />
+	                    <Route exact path="/" component={HomeV2} />
+                        <Route path="/home-v2" component={HomeV1} />
                         <Route path="/home-v3" component={HomeV3} />
                         <Route path="/home-v4" component={HomeV4} />
                         <Route path="/home-v5" component={HomeV5} />

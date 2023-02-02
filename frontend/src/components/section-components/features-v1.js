@@ -16,7 +16,7 @@ class FeaturesV1 extends Component {
 			      <div className="col-lg-12">
 			        <div className="section-title-area ltn__section-title-2--- text-center">
 			          <h6 className="section-subtitle section-subtitle-2 ltn__secondary-color">Our Services</h6>
-			          <h1 className="section-title">Our Main Focus</h1>
+			          <h1 className="section-title">Nos services</h1>
 			        </div>
 			      </div>
 			    </div>
@@ -27,9 +27,9 @@ class FeaturesV1 extends Component {
 			            <img src={publicUrl+"assets/img/icons/icon-img/21.png"} alt="#" />
 			          </div>
 			          <div className="ltn__feature-info">
-			            <h3><Link to="/service-details">Buy a home</Link></h3>
-			            <p>over 1 million+ homes for sale available on the website, we can match you with a house you will want to call home.</p>
-			            <Link className="ltn__service-btn" to="/service-details">Find A Home <i className="flaticon-right-arrow" /></Link>
+			            <h3><Link to="/service-details">Acheter</Link></h3>
+			            <p>plus de 1000 biens immobilés disponible sur le site pour vente , explorer les et decidez lequel vous plait   </p>
+			            <Link className="ltn__service-btn" to="/">Find A Home <i className="flaticon-right-arrow" /></Link>
 			          </div>
 			        </div>
 			      </div>
@@ -39,8 +39,8 @@ class FeaturesV1 extends Component {
 			            <img src={publicUrl+"assets/img/icons/icon-img/22.png"} alt="#" />
 			          </div>
 			          <div className="ltn__feature-info">
-			            <h3><Link to="/service-details">Rent a home</Link></h3>
-			            <p>over 1 million+ homes for sale available on the website, we can match you with a house you will want to call home.</p>
+			            <h3><Link to="/service-details">Louer</Link></h3>
+			            <p> environs 1500 biens immobiliers sur Hously pour location , trouvez  vos besoin avec le prix qui vous convient </p>
 			            <Link className="ltn__service-btn" to="/service-details">Find A Home <i className="flaticon-right-arrow" /></Link>
 			          </div>
 			        </div>
@@ -51,8 +51,8 @@ class FeaturesV1 extends Component {
 			            <img src={publicUrl+"assets/img/icons/icon-img/23.png"} alt="#" />
 			          </div>
 			          <div className="ltn__feature-info">
-			            <h3><Link to="/service-details">Sell a home</Link></h3>
-			            <p>over 1 million+ homes for sale available on the website, we can match you with a house you will want to call home.</p>
+			            <h3><Link to="/service-details">Vender</Link></h3>
+			            <p>vous voulez vendre une maison? terrain ou appartement connecter vous et deposez une annonce .</p>
 			            <Link className="ltn__service-btn" to="/service-details">Find A Home <i className="flaticon-right-arrow" /></Link>
 			          </div>
 			        </div>

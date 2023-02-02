@@ -13,7 +13,7 @@ class AboutV3 extends Component {
 			    <div className="row">
 			      <div className="col-lg-6 align-self-center">
 			        <div className="about-us-img-wrap about-img-left">
-			          <img src={publicUrl+"assets/img/others/11.png"} alt="About Us Image" />
+			          <img src={publicUrl+"assets/img/others/11.jpg"} alt="About Us Image" />
 			          <div className="about-us-img-info about-us-img-info-2 about-us-img-info-3 d-none">
 			            <div className="ltn__video-img ltn__animation-pulse1">
 			              <img src={publicUrl+"assets/img/others/8.png"} alt="video popup bg image" />
@@ -28,27 +28,27 @@ class AboutV3 extends Component {
 			        <div className="about-us-info-wrap">
 			          <div className="section-title-area ltn__section-title-2--- mb-30">
 			            <h6 className="section-subtitle section-subtitle-2--- ltn__secondary-color">About Us</h6>
-			            <h1 className="section-title">Dream Living Spaces
-			              Setting New Build</h1>
-			            <p>Over 39,000 people work for us in more than 70 countries all over the
-			              This breadth of global coverage, combined with specialist services</p>
+			            <h1 className="section-title">Deposez et explorer les annonces immobilères</h1>
+			            <p> 
+							Hously est le site qui vous permet de promouvoir vos annonces immobilière , de different types que se soit maisons , vila terrain agricol ou autres 
+						</p>
 			          </div>                        
 			          <div className="ltn__feature-item ltn__feature-item-3">
 			            <div className="ltn__feature-icon">
-			              <span><i className="flaticon-house-4" /></span>
+			              <span><i className="flaticon-house-3" /></span>
 			            </div>
 			            <div className="ltn__feature-info">
-			              <h4><a href="service-details.html">The Perfect Residency</a></h4>
-			              <p>Lorem ipsum dolor sit amet, consectetur adipisic do eiusmod tempor incididunt ut labore et</p>
+			              <h4><a href="service-details.html">Déposez vos annonces</a></h4>
+			              <p> déposer, chercher et filtrer les annonces selon le prix qui vous convient , et négocier avec le propriètaire</p>
 			            </div>
 			          </div>
 			          <div className="ltn__feature-item ltn__feature-item-3">
 			            <div className="ltn__feature-icon">
-			              <span><i className="flaticon-call-center-agent" /></span>
+			              <span><i className="flaticon-loupe" /></span>
 			            </div>
 			            <div className="ltn__feature-info">
-			              <h4><a href="service-details.html">Global Architect Experts</a></h4>
-			              <p>Lorem ipsum dolor sit amet, consectetur adipisic do eiusmod tempor incididunt ut labore et</p>
+			              <h4><a href="service-details.html">Explorer d'autre annonces </a></h4>
+			              <p> si vous vous interessez à une annonce ,vous pouver alors directement appeler le propriètaire ou le contacter par mail </p>
 			            </div>
 			          </div>
 			          <div className="ltn__feature-item ltn__feature-item-3">
@@ -56,8 +56,8 @@ class AboutV3 extends Component {
 			              <span><i className="flaticon-maps-and-location" /></span>
 			            </div>
 			            <div className="ltn__feature-info">
-			              <h4><a href="service-details.html">Built-in Storage Cupboards</a></h4>
-			              <p>Lorem ipsum dolor sit amet, consectetur adipisic do eiusmod tempor incididunt ut labore et</p>
+			              <h4><a href="service-details.html">Choisissez la localisation</a></h4>
+			              <p> deposer et explorer les annonces avec leur emplacement exact de l'immobiler à travers google map </p>
 			            </div>
 			          </div>
 			        </div>

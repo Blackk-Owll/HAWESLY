@@ -13,6 +13,8 @@ import Cateogory from './section-components/category-v2';
 import Testimonial from './section-components/testimonial-v2';
 import BlogSlider from './blog-components/blog-slider-v1';
 import CallToActionV1 from './section-components/call-to-action-v1';
+import CallToActionV2 from './section-components/call-to-action-v2';
+import CallToActionV3 from './section-components/call-to-action-v3';
 import Footer from './global-components/footer';
 
 const Home_V2 = () => {
@@ -20,17 +22,9 @@ const Home_V2 = () => {
         <Navbar />
         <Banner />
         <Aboutv3 />
-        <Video />
         <Features customClass="ltn__feature-area section-bg-1--- pt-115 pb-90 mb-120---"/>
-        <UpComingProduct />
-        <ApartmentV2 />
-        <ProductSlider />
-        <Availability />
-        <Neighbour />
-        <Cateogory />
-        <Testimonial />
-        <BlogSlider />
-        <CallToActionV1 />
+       
+        <CallToActionV3 />
         <Footer />
     </div>
 }

@@ -47,13 +47,13 @@ class BannerV2 extends Component {
                           </div>
                           <div className="btn-wrapper animated">
                             <Link
-                              to="/service"
+                              to="/login"
                               className="theme-btn-1 btn btn-effect-1"
                             >
                               SE CONNECTER
                             </Link>
                             <Link
-                              to="/about"
+                              to="/register"
                               className="btn btn-transparent btn-effect-3"
                             >
                               S'INSCRIRE

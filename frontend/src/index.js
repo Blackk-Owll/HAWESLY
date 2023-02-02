@@ -61,16 +61,8 @@ class Root extends Component {
       <div id="App">
         <Router>
           <Routes>
-            <Route exact path="/" element={<HomeV1 />} />
-            <Route exact path="/home-v2" element={<HomeV2 />} />
-            <Route exact path="/home-v3" element={<HomeV3 />} />
-            <Route exact path="/home-v4" element={<HomeV4 />} />
-            <Route exact path="/home-v5" element={<HomeV5 />} />
-            <Route exact path="/home-v6" element={<HomeV6 />} />
-            <Route exact path="/home-v7" element={<HomeV7 />} />
-            <Route exact path="/home-v8" element={<HomeV8 />} />
-            <Route exact path="/home-v9" element={<HomeV9 />} />
-            <Route exact path="/home-v10" element={<HomeV10 />} />
+            <Route exact path="/" element={<HomeV2 />} />
+           
 
             <Route exact path="/about" element={<About />} />
             <Route exact path="/service" element={<Service />} />

@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import parse from "html-react-parser";
 import { useState, useEffect, useContext } from "react";
+import {refreshAnnonce,getChamps,getAnnoncerAdress,postMessageOffre} from "../../Controllers/detailsController"
 import { toast } from "react-toastify";
-
 // implementation de la logique de requetes api
 import API from "../../API";
 import { useParams } from "react-router-dom";
@@ -26,115 +26,59 @@ function ShopDetails() {
   const [annonceurCommune, setAnnonceurCommune] = useState("");
   const [annonceurId, setAnnonceurId] = useState(0);
 
-  
-
-
   // on recuperer le id passé evec le lien
 
   let idAnnonce = useParams().id;
-
+ let x= 5;
   // charger l'annonce au chergement de la page
   useEffect(() => {
     // recupere l'annonce
-    refrechAnnonce();
+    refreshAnnonce(setAnnonce,idAnnonce);
     console.log(annonce);
-  }, []);
-  function refrechAnnonce() {
-    API.get(`/annonces/${idAnnonce}`).then((res) => {
-      setAnnonce(res.data);
-    });
-  }
-
-// chrger les coordonnée du map  google map
- 
-useEffect(()=>{
     
-  const iframeData=document.getElementById("map")
-  const lat=annonce.mapX;
-  const lon=annonce.mapY;
-  const zoom =annonce.zoom;
+  }, []);
 
-  iframeData.src=`https://maps.google.com/maps?q=${lat},${lon}&hl=es&z=${zoom}&amp;&output=embed`
-  console.log(iframeData.src);
-},[annonce])
+  // chrger les coordonnée du map  google map
 
+  function chargerMap() {
+    const iframeData = document.getElementById("map");
+    const lat = annonce.mapX;
+    const lon = annonce.mapY;
+    const zoom = annonce.zoom;
+
+    iframeData.src = `https://maps.google.com/maps?q=${lat},${lon}&hl=es&z=${zoom}&amp;&output=embed`;
+    console.log(iframeData.src);
+  }
+  useEffect(() => {
+    chargerMap();
+  }, [annonce]);
 
   // recupere les chemps ( clés etrangères ) externe en texte
+
   useEffect(() => {
-    if (annonce !== undefined) {
-      API.get(`/categories/${annonce.categorie}`).then((res) => {
-        setCategorie(res.data.label);
-        // console.log(res.data.label);
-      });
-
-      API.get(`/types/${annonce.type}`).then((res) => {
-        setType(res.data.type);
-        // console.log(res.data.type);
-      });
-
-      API.get(`/wilayas/${annonce.wilaya}`).then((res) => {
-        setWilaya(res.data.nom);
-        // console.log(res.data);
-      });
-
-      API.get(`/communes/${annonce.commune}`).then((res) => {
-        setCommune(res.data.nom);
-        // console.log(res.data.nom);
-      });
-
-      // recuperé le propriètaire de l'annocnce
-      API.get(`/users/${annonce.user}`).then((res) => {
-        setAnnonceur(res.data);
-      });
-
-    }
+   getChamps(annonce,setCategorie,setType,setAnnonceur,setWilaya,setCommune);
   }, [annonce]);
 
   // charger l'asresse de l'annonceur
+
   useEffect(() => {
-    API.get(`/wilayas/${annonceur.wilaya}`).then((res) => {
-      setAnnonceurWilaya(res.data.nom);
-    });
-
-    API.get(`/communes/${annonceur.commune}`).then((res) => {
-      setAnnonceurCommune(res.data.nom);
-
-      setAnnonceurId(annonceur.annonceurId);
-    });
+   getAnnoncerAdress(annonceur,setAnnonceurWilaya,setAnnonceurCommune,setAnnonceurId)
   }, [annonceur]);
 
   //--------- envois des messsage d'offre
   const [contenu, setContenu] = useState("");
   const [messageOffre, setMessageOffre] = useState({});
 
-  const envoieMessage = (e) => {
+  
+  function envoieMessage (e) {
     e.preventDefault();
     // l'emetteur sera l'utilisateur authentifié
     let emetteur = 1;
     /*********************** */
+    postMessageOffre(contenu,idAnnonce,emetteur);
+    toast.success("Message d'offre envoyé avec succès !");
 
-    API.post(
-      `/messagesOffres/`,
-      {
-        contenu: contenu,
-        Annonce: idAnnonce,
-        emetteur: emetteur,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
-    )
-      .then((response) => {
-        console.log(response);
-        toast.success("Message d'offre envoyé avec succès !");
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-  };
-
 
   return (
     <div className="ltn__shop-details-area pb-10">
@@ -144,7 +88,6 @@ useEffect(()=>{
             <div className="ltn__shop-details-inner ltn__page-details-inner mb-60">
               <div className="ltn__blog-meta">
                 <ul>
-                 
                   <li className="ltn__blog-category">
                     <Link to="#"> {categorie}</Link>
                   </li>
@@ -155,7 +98,7 @@ useEffect(()=>{
                   </li>
                   <li className="ltn__blog-date">
                     <i className="far fa-calendar-alt" />
-                    Publiée le  {annonce.date && annonce.date}
+                    Publiée le {annonce.date && annonce.date}
                   </li>
                   <li>
                     <Link to="#">
@@ -439,10 +382,9 @@ useEffect(()=>{
   </div>*/}
               <h4 className="title-2">Localisation</h4>
               <div className="property-details-google-map mb-60">
-                
                 <iframe
                   id="map"
-                 // src="https://maps.google.com/maps?q=+36.722766877219634,3.1850375926974666&hl=es&z=14&amp;output=embed"
+                  // src="https://maps.google.com/maps?q=+36.722766877219634,3.1850375926974666&hl=es&z=14&amp;output=embed"
                   width="100%"
                   height="100%"
                   frameBorder={0}
@@ -450,21 +392,15 @@ useEffect(()=>{
                   aria-hidden="false"
                   tabIndex={0}
                 ></iframe>
-               
               </div>
-  
+
               <div className="ltn__shop-details-tab-content-inner--- ltn__shop-details-tab-inner-2 ltn__product-details-review-inner mb-60">
-
-        
-
                 {/* comment-reply */}
                 <div className="ltn__comment-reply-area ltn__form-box mb-30">
                   <form action="#">
                     <h4>Envoyer un message d'offre</h4>
                     <div className="mb-30">
-                      <div className="add-a-review">
-                       
-                      </div>
+                      <div className="add-a-review"></div>
                     </div>
                     <div className="input-item input-item-textarea ltn__custom-icon">
                       <textarea
@@ -475,7 +411,7 @@ useEffect(()=>{
                     </div>
 
                     <div className="btn-wrapper">
-                      <button 
+                      <button
                         onClick={envoieMessage}
                         className="btn theme-btn-1 btn-effect-1 text-uppercase"
                         type="submit"
@@ -781,8 +717,6 @@ useEffect(()=>{
                   </div>
                 </div>
               </div>
-
-            
 
               {/* Banner Widget */}
               <div className="widget ltn__banner-widget d-none go-top">

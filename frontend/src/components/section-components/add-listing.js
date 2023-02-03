@@ -1,472 +1,427 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import parse from 'html-react-parser';
+import React, { Component } from "react";
+import { useState, useEffect, useHistory } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.js";
+import L from "leaflet";
+import AsyncSelect from "react-select/async";
 
-class AddListing extends Component {
+import API from "../../API";
 
-    render() {
+const AddListing = () => {
+  //let history = useHistory();
+  let publicUrl = process.env.PUBLIC_URL + "/";
+  const [user, setUser] = useState({});
+  const [description, setDescription] = useState("");
+  const [prix, setPrix] = useState(0);
+  const [surface, setSurface] = useState(0);
+  const [wilaya, setWilaya] = useState("");
+  const [commune, setCommune] = useState("");
+  const [adresse, setAdresse] = useState("");
+  const [categorie, setCategorie] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [wilayas, setWilayas] = useState([]);
+  const [communes, setCommunes] = useState([]);
+  const [type, setType] = useState("");
+  const [titre, setTitre] = useState("");
+  const [mapX, setMapX] = useState(0);
+  const [mapY, setMapY] = useState(0);
+  const [zoom, setZoom] = useState(0);
+  const [photo, setPhoto] = useState([]);
 
-        let publicUrl = process.env.PUBLIC_URL+'/'
+  // const history = useHistory();
 
-    return <div className="ltn__appointment-area pb-120">
-                <div className="container">
+  //const handleSubmit = (event) => {
+  // event.preventDefault();
+  // Perform form submission logic...
+
+  // Navigate to another page after successful submission
+  //history.push("shop-components/shop-grid-v1.js");
+  //};
+
+  const handleChangeCat = (value) => {
+    setCategorie(value.categorieId);
+    console.log("categorie", categorie);
+  };
+
+  const handleChangeWil = (value) => {
+    setWilaya(value.wilayaId);
+    console.log("wilaya", wilaya);
+  };
+
+  const handleChangeTy = (value) => {
+    setType(value.typeId);
+    console.log("type", type);
+  };
+
+  const handleChangeCom = (value) => {
+    setCommune(value.communeId);
+    console.log("commune", commune);
+  };
+
+  const recupererCategorie = () => {
+    return API.get(`categories/`).then((res) => {
+      res = res.data;
+      return res;
+    });
+  };
+
+  const recupererWilaya = () => {
+    return API.get(`wilayas/`).then((res) => {
+      res = res.data;
+      return res;
+    });
+  };
+
+  const recupererType = () => {
+    return API.get(`types/`).then((res) => {
+      res = res.data;
+      return res;
+    });
+  };
+
+  const recupererCommune = () => {
+    return API.get(`communes/`).then((res) => {
+      res = res.data;
+      return res;
+    });
+  };
+
+  useEffect(() => {
+    recupererType();
+    recupererCategorie();
+    recupererWilaya();
+    recupererCommune();
+  }, []);
+
+  const Addmap = (e) => {
+    let mapOptions = {
+      center: [51.958, 9.141],
+      zoom: 10,
+      height: 80,
+    };
+
+    let map = new L.map("map", mapOptions);
+    let layer = new L.TileLayer(
+      "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    );
+    map.addLayer(layer);
+
+    let marker = null;
+    map.on("click", (event) => {
+      if (marker !== null) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker([event.latlng.lat, event.latlng.lng, event.zoom]).addTo(
+        map
+      );
+
+      document.getElementById("latitude").value = event.latlng.lat;
+      document.getElementById("longitude").value = event.latlng.lng;
+
+      setMapX(document.getElementById("latitude").value);
+      setMapY(document.getElementById("longitude").value);
+      console.log(map.getBounds());
+      //console.log ( document.getElementById('longitude').value);
+    });
+  };
+
+    const addNewAnnonce = (e) => {
+        e.preventDefault();
+
+    API.post(
+      `annonces/`,
+      {
+        user: 1,
+        wilaya: wilaya,
+        description: description,
+        prix: prix,
+        titre: titre,
+        surface: surface,
+        commune: commune,
+        adresse: adresse,
+        categorie: categorie,
+        type: type,
+        mapX: mapX,
+        mapY: mapY,
+      
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((response) => {
+      console.log(response);
+      console.log(
+        "Ajout avec succés , id annonce est : ",
+        response.data.annonceId
+      );
+
+      var i = 0;
+      while (photo[i] !== undefined) {
+        let formData = new FormData();
+        formData.append("image", photo[i]);
+        formData.append("annonce", response.data.annonceId);
+        API.post(`/photos/`, formData, {
+          headers: {
+            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
+        i++;
+      }
+    });
+  };
+
+  return (
+    <div className="ltn__appointment-area pb-120">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="ltn__appointment-inner">
+              <form action="#">
+                <h2>1. Description </h2>
+
+                <h6>Description du bien</h6>
+
                 <div className="row">
-                    <div className="col-lg-12">
-                    <div className="ltn__appointment-inner">
-                        <form action="#">
-                        <h2>1. Description</h2>
-                        <p><small>These fields are mandatory: Title, Property Media</small></p>
-                        <h6>Property Description</h6>
-                        <div className="row">
-                            <div className="col-md-12">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="*Title (mandatory)" />
-                            </div>
-                            <div className="input-item input-item-textarea ltn__custom-icon">
-                                <textarea name="ltn__message" placeholder="Description" defaultValue={""} />
-                            </div>
-                            </div>
-                        </div>
-                        <h6>Property Price</h6>
-                        <div className="row">
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Price in $ (only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="After Price Label (ex: /month)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Before Price Label (ex: from)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Yearly Tax Rate" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Homeowners Association Fee(monthly)" />
-                            </div>
-                            </div>
-                        </div>
-                        <h6>Select Categories</h6>
-                        <div className="row">
-                            <div className="col-lg-4 col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>None</option>
-                                <option>Apartments</option>
-                                <option>Condos</option>
-                                <option>Duplexes</option>
-                                <option>Houses</option>
-                                <option>Industrial</option>
-                                <option>Land</option>
-                                <option>Offices</option>
-                                <option>Retail</option>
-                                <option>Villas</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>None</option>
-                                <option>Rentals</option>
-                                <option>Sales</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>no status</option>
-                                <option>Active</option>
-                                <option>hot offer</option>
-                                <option>new offer</option>
-                                <option>open house</option>
-                                <option>sold</option>
-                                </select>
-                            </div>
-                            </div>
-                        </div>
-                        <h2>2. Media</h2>
-                        <h6>Listing Media</h6>
-                        <input type="file" id="myFile" name="filename" className="btn theme-btn-3 mb-10" /><br />
-                        <p>
-                            <small>* At least 1 image is required for a valid submission.Minimum size is 500/500px.</small><br />
-                            <small>* PDF files upload supported as well.</small><br />
-                            <small>* Images might take longer to be processed.</small>
-                        </p>
-                        <h6>Video Option</h6>
-                        <div className="row">
-                            <div className="col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>Video from</option>
-                                <option>vimeo</option>
-                                <option>youtube</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Embed Video ID" />
-                            </div>
-                            </div>
-                        </div>
-                        <h6>Virtual Tour</h6>
-                        <div className="input-item input-item-textarea ltn__custom-icon">
-                            <textarea name="ltn__message" placeholder="Virtual Tour:" defaultValue={""} />
-                        </div>
-                        <h2>3. Location</h2>
-                        <h6>Listing Location</h6>
-                        <div className="row">
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="*Address" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Country" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="County / State" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="City" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Neighborhood" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Zip" />
-                            </div>
-                            </div>
-                            <div className="col-lg-12">
-                            <div className="property-details-google-map mb-60">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9334.271551495209!2d-73.97198251485975!3d40.668170674982946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25b0456b5a2e7%3A0x68bdf865dda0b669!2sBrooklyn%20Botanic%20Garden%20Shop!5e0!3m2!1sen!2sbd!4v1590597267201!5m2!1sen!2sbd" width="100%" height="100%" frameBorder={0} allowFullScreen aria-hidden="false" tabIndex={0} />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Latitude (for Google Maps)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Longitude (for Google Maps)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <label className="checkbox-item">Enable Google Street View
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Google Street View - Camera Angle (value from 0 to 360)" />
-                            </div>
-                            </div>
-                        </div>
-                        <h2>4. Details</h2>
-                        <h6>Listing Details</h6>
-                        <div className="row">
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Size in ft2 (*only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Lot Size in ft2 (*only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Rooms (*only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Bedrooms (*only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Bathrooms (*only numbers)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Custom ID (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Garages (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Year Built (*numeric)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Garage Size (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Available from (*date)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Basement (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Extra Details (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Roofing (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Exterior Material (*text)" />
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>Structure Type</option>
-                                <option>Not Available</option>
-                                <option>Brick</option>
-                                <option>Wood</option>
-                                <option>Cement</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>Floors No</option>
-                                <option>Not Available</option>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-lg-12">
-                            <div className="input-item input-item-textarea ltn__custom-icon">
-                                <textarea name="ltn__message" placeholder="Owner/Agent notes (*not visible on front end)" defaultValue={""} />
-                            </div>
-                            </div>
-                        </div>
-                        <h6>Select Energy Class</h6>
-                        <div className="row">
-                            <div className="col-md-6">
-                            <div className="input-item">
-                                <select className="nice-select">
-                                <option>Select Energy Class (EU regulation)</option>
-                                <option>A+</option>
-                                <option>A</option>
-                                <option>B</option>
-                                <option>C</option>
-                                <option>D</option>
-                                <option>E</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="input-item input-item-name ltn__custom-icon">
-                                <input type="text" name="ltn__name" placeholder="Energy Index in kWh/m2a" />
-                            </div>
-                            </div>
-                        </div>
-                        <h2>5. Amenities</h2>
-                        <h6>Amenities and Features</h6>  
-                        <h6>Interior Details</h6>                      
-                        <div className="row">                                
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Equipped Kitchen
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Gym
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Laundry
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Media Room
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                        </div>  
-                        <h6 className="mt-20">Outdoor Details</h6>                      
-                        <div className="row">                                
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Back yard
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Basketball court
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Front yard
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Garage Attached
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Hot Bath
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Pool
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                        </div> 
-                        <h6 className="mt-20">Utilities</h6>                      
-                        <div className="row">                                
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Central Air
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Electricity
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Heating
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Natural Gas
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Ventilation
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Water
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                        </div> 
-                        <h6 className="mt-20">Other Features</h6>                      
-                        <div className="row">                                
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Chair Accessible
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Elevator
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Fireplace
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Smoke detectors
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">Washer and dryer
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                            <div className="col-lg-4 col-md-6">
-                            <label className="checkbox-item">WiFi
-                                <input type="checkbox" />
-                                <span className="checkmark" />
-                            </label>
-                            </div>
-                        </div>
-                        <div className="alert alert-warning d-none" role="alert">
-                            Please note that the date and time you requested may not be available. We will contact you to confirm your actual appointment details.
-                        </div>
-                        <div className="btn-wrapper text-center mt-30">
-                            <button className="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Submit Property</button>
-                        </div>
-                        </form>
+                  <div className="col-md-12">
+                    <div className="input-item input-item-textarea ltn__custom-icon">
+                      <textarea
+                        placeholder="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        name="description"
+                        required
+                      />
                     </div>
-                    </div>
+                  </div>
                 </div>
-                </div>
-            </div>
-        }
-}
 
-export default AddListing
+                <br></br>
+                <h6>Titre</h6>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <input
+                        type="text"
+                        placeholder="Titre"
+                        name="prix"
+                        value={titre}
+                        onChange={(e) => setTitre(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <br></br>
+                <h6>Prix / Surface</h6>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <input
+                        type="text"
+                        placeholder="Prix en Dinar algerien (juste le nombre)"
+                        name="prix"
+                        value={prix}
+                        onChange={(e) => setPrix(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <input
+                        type="text"
+                        placeholder="surface en m2 (juste le nombre)"
+                        name="surface"
+                        value={surface}
+                        onChange={(e) => setSurface(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <h6>Catégorie/Type du bien </h6>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="input-item">
+                      <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={categories}
+                        getOptionLabel={(e) => e.label}
+                        getOptionValue={(e) => e.categorieId}
+                        loadOptions={recupererCategorie}
+                        onChange={handleChangeCat}
+                        placeholder="Categorie"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="input-item">
+                      <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={types}
+                        getOptionLabel={(e) => e.type}
+                        getOptionValue={(e) => e.typeId}
+                        loadOptions={recupererType}
+                        onChange={handleChangeTy}
+                        placeholder="Type"
+                      />
+                    </div>
+                    <br></br>
+                  </div>
+                </div>
+
+                <h2>2. Media</h2>
+                <h6>Photos du bien</h6>
+                <div className="container">
+                  <input
+                    type="file"
+                    id="file-input"
+                    accept="image/png, image/jpeg"
+                    onChange={(e) => setPhoto(e.target.files)}
+                    multiple
+                  ></input>
+                  <label htmlFor="file-input"></label>
+                  <div id="images"></div>
+                </div>
+                <br></br>
+
+                <h2>3.Emplacement</h2>
+
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={communes}
+                        getOptionLabel={(e) => e.nom}
+                        getOptionValue={(e) => e.communeId}
+                        loadOptions={recupererCommune}
+                        onChange={handleChangeCom}
+                        placeholder="Commune"
+                      />
+                      <br></br> <br></br> <br></br>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={wilayas}
+                        getOptionLabel={(e) => e.nom}
+                        getOptionValue={(e) => e.wilayaId}
+                        loadOptions={recupererWilaya}
+                        onChange={handleChangeWil}
+                        placeholder="Wilaya"
+                      />
+                    </div>{" "}
+                  </div>
+
+                  <div className="col-md-6">
+                    <div className="input-item input-item-name ltn__custom-icon">
+                      <input
+                        type="text"
+                        name="adresse"
+                        placeholder="Adresse"
+                        value={adresse}
+                        onChange={(e) => setAdresse(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div onClick={Addmap} id="map">
+                    <br></br> <br></br> <br></br> <br></br> <br></br> <br></br>{" "}
+                    <br></br> <br></br> <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6">
+                      <div className="input-item input-item-name ltn__custom-icon">
+                        <input
+                          type="text"
+                          id="latitude"
+                          placeholder="latitude"
+                          value={mapX}
+                          onChange={(e) => setMapX(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="input-item input-item-name ltn__custom-icon">
+                        <input
+                          type="text"
+                          id="longitude"
+                          placeholder="longitude"
+                          value={mapY}
+                          onChange={(e) => setMapY(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="alert alert-warning d-none" role="alert">
+                  Please note that the date and time you requested may not be
+                  available. We will contact you to confirm your actual
+                  appointment details.
+                </div>
+                <form>
+                  <div className="btn-wrapper text-center mt-30">
+                    <button
+                      onClick={addNewAnnonce}
+                      type="submit"
+                      className="btn theme-btn-1 btn-effect-1 text-uppercase"
+                    >
+                      Confirmer
+                    </button>
+                  </div>
+                </form>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddListing;

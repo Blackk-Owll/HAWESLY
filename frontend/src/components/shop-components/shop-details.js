@@ -48,21 +48,42 @@ function ShopDetails() {
     iframeData.src = `https://maps.google.com/maps?q=${lat},${lon}&hl=es&z=${zoom}&amp;&output=embed`;
     console.log(iframeData.src);
   }
+
+  // charger la localisation de l'Annonce
   useEffect(() => {
     chargerMap();
+
   }, [annonce]);
+
+// recuperer les photos de l'annonce
+const [photos, setPhotos]=useState([]);
+function getPhotos(idAnnonce){
+  API.get(`/photos/`).then((res) => {
+    console.log(res.data);
+    setPhotos(res.data);
+  });
+}
+
 
   // recupere les chemps ( clés etrangères ) externe en texte
 
   useEffect(() => {
    getChamps(annonce,setCategorie,setType,setAnnonceur,setWilaya,setCommune);
+    getPhotos(idAnnonce);
   }, [annonce]);
+
+
+
+  
 
   // charger l'asresse de l'annonceur
 
   useEffect(() => {
    getAnnoncerAdress(annonceur,setAnnonceurWilaya,setAnnonceurCommune,setAnnonceurId)
   }, [annonceur]);
+  
+
+
 
   //--------- envois des messsage d'offre
   const [contenu, setContenu] = useState("");

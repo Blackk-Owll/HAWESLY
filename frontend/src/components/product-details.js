@@ -13,11 +13,10 @@ import Footer from './global-components/footer';
 const Product_Details = () => {
 
     /*cette page vas contenir les details d'une annonce  */
-    
 
     return <div>
         <Navbar />
-        <PageHeader headertitle="Product Details" customclass="mb-0" />
+        <PageHeader headertitle="Details de l'annonce" customclass="mb-0" />
         <ProductSlider />
         <ProductDetails />
         <CallToActionV1 />

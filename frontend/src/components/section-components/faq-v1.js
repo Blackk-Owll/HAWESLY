@@ -17,18 +17,18 @@ class FaqV1 extends Component {
                     {/* card */}
                     <div className="card">
                         <h6 className="collapsed ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-1" aria-expanded="false">
-                        How to buy a product?
+                        Comment acheter un bien immobiler?
                         </h6>
                         <div id="faq-item-2-1" className="collapse" data-bs-parent="#accordion_2">
                         <div className="card-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eleifend donec pretium vulputate sapien nec sagittis. Proin libero nunc consequat interdum. Condimentum lacinia quis vel eros donec ac. Mauris sit amet massa vitae tortor. Quisque id diam vel quam elementum pulvinar. Gravida in fermentum et sollicitudin ac orci phasellus. Facilisis gravida neque convallis a cras semper. Non arcu risus quis varius quam quisque id.</p>
+                            <p> vous devez d'abord être inscrit et connecté à votre comte HOUSLY , vous pouvez ensuite acceder à la page des annonces déposées par plusieur personnes et de plusieur types, acceder vous selectionnez l'annonce qui vous interesse pour plus de details , si elle vous interesse vraiment , vous pouvez donc conacter l'annonceur pour négocier via téléphone ou email . </p>
                         </div>
                         </div>
                     </div>
                     {/* card */}
                     <div className="card">
                         <h6 className="ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-2" aria-expanded="true"> 
-                        How can i make refund from your website?
+                        comment mes annonces sont partagé au utilisateurs ?
                         </h6>
                         <div id="faq-item-2-2" className="collapse show" data-bs-parent="#accordion_2">
                         <div className="card-body">

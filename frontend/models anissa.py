@@ -16,22 +16,21 @@ class Wilaya(models.Model):
 class Commune(models.Model):
     communeId = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
-    wilaya = models.ForeignKey(Wilaya, on_delete=models.DO_NOTHING)
+    wilaya = models.ForeignKey(Wilaya, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.nom
 
 
 class User(models.Model):
-    userId = models.AutoField(primary_key=True)
+    userId = models.AutoField(primary_key=True )
+    username = models.CharField(max_length=100 )
     email = models.EmailField(max_length=100)
+    password = models.CharField(max_length=100)
     nom = models.CharField(max_length=200)
     prenom = models.CharField(max_length=200)
-    wilaya = models.ForeignKey(Wilaya, on_delete=models.DO_NOTHING )
-    commune = models.ForeignKey(Commune, on_delete=models.DO_NOTHING)
-    adresse=models.CharField(_(""), max_length=50)
     phone = models.IntegerField()
-
+    adresse = models.TextField(default="")
     def __str__(self) -> str:
         return self.username
 
@@ -53,7 +52,7 @@ class Categorie(models.Model):
 class Annonce(models.Model):
 
     annonceId = models.AutoField(primary_key=True)
-    titre=models.CharField(max_length=300)
+    titre = models.TextField(default="")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
     prix = models.IntegerField()
@@ -64,12 +63,13 @@ class Annonce(models.Model):
     categorie = models.ForeignKey(Categorie, on_delete=models.DO_NOTHING)
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
-    mapX = models.IntegerField()
-    mapY = models.IntegerField()
-    
+    mapX = models.FloatField()
+    mapY = models.FloatField()
+
 
     def __str__(self) -> str:
         return (str(self.annonceId))
+
 
 class Photo(models.Model):
     photoId = models.AutoField(primary_key=True)
@@ -79,13 +79,14 @@ class Photo(models.Model):
     def __str__(self) -> str:
           return (str(self.image))
 
+
 class Position(models.Model):
 
     # peut etre util pour la recuperation de posiion seulement
 
     x = models.IntegerField()
     y = models.IntegerField()
-    zoom = models.FloatField()
+   
 
 
 class Favori(models.Model):
@@ -100,9 +101,7 @@ class Favori(models.Model):
 class MessgeOffre(models.Model):
     messgeOffreId = models.AutoField(primary_key=True)
     Annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)
-    emetteur = models.ForeignKey(User,related_name="client_user", on_delete=models.DO_NOTHING)
-    annonceur = models.ForeignKey(User, related_name="annonceur_user",on_delete=models.CASCADE)
-    contenu = models.TextField(_(""))
+    emetteur = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
 
 class Admin(models.Model):

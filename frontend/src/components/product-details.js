@@ -13,7 +13,6 @@ import Footer from './global-components/footer';
 const Product_Details = () => {
 
     /*cette page vas contenir les details d'une annonce  */
-    
 
     return <div>
         <Navbar />

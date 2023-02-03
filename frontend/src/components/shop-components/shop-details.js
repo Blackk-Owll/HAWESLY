@@ -27,9 +27,8 @@ function ShopDetails() {
   const [annonceurId, setAnnonceurId] = useState(0);
 
   // on recuperer le id passé evec le lien
-
   let idAnnonce = useParams().id;
- let x= 5;
+
   // charger l'annonce au chergement de la page
   useEffect(() => {
     // recupere l'annonce

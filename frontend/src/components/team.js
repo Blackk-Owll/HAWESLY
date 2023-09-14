@@ -8,7 +8,7 @@ import Footer from './global-components/footer';
 const Team_V1 = () => {
     return <div>
         <Navbar />
-        <PageHeader headertitle="Our Agent" subheader="Agent" />
+        <PageHeader headertitle="Team" subheader="Team" />
         <TeamV1 />
         <CallToActionV1 />
         <Footer />

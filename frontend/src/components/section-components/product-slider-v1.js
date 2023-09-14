@@ -523,19 +523,7 @@ class ProductSliderV1 extends Component {
 									<span>$149.00</span>
 									<del>$165.00</del>
 									</div>
-									<div className="modal-product-meta ltn__product-details-menu-1">
-									<ul>
-										<li>
-										<strong>Categories:</strong> 
-										<span className="go-top">
-											<Link to="/blog">Parts</Link>
-											<Link to="/blog">Car</Link>
-											<Link to="/blog">Seat</Link>
-											<Link to="/blog">Cover</Link>
-										</span>
-										</li>
-									</ul>
-									</div>
+									
 									<div className="ltn__product-details-menu-2">
 									<ul>
 										<li>
@@ -593,7 +581,7 @@ class ProductSliderV1 extends Component {
 									<h5 className="go-top"><Link to="/product-details">Brake Conversion Kit</Link></h5>
 									<p className="added-cart"><i className="fa fa-check-circle" />Successfully added to your Cart</p>
 									<div className="btn-wrapper">
-									<Link to="/cart" className="theme-btn-1 btn btn-effect-1">View Cart</Link>
+								
 									<Link to="/checkout" className="theme-btn-2 btn btn-effect-2">Checkout</Link>
 									</div>
 								</div>

@@ -1,55 +1,96 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import parse from 'html-react-parser';
+import React from "react";
+import { useState, useEffect, useContext } from "react";
+// implementation de la logique de requetes api
+import API from "../../API";
+import { useParams } from "react-router-dom";
 
-class ProductSliderV1 extends Component {
+function ProductSliderV1() {
+  let publicUrl = process.env.PUBLIC_URL + "/";
+  // recuperer l id de l'annonce
+  let idAnnonce = useParams().id;
 
-    render() {
+  // recuperer les photos de l'annonce
 
-        let publicUrl = process.env.PUBLIC_URL+'/'
+  const [photos, setPhotos] = useState([]);
+  function getPhotos(idAnnonce) {
+    console.log(idAnnonce);
+    API.get(`/photos/`, { idAnnonce: idAnnonce }).then((res) => {
+      setPhotos(
+        res.data.filter((photo) => {
+          return photo.annonce == idAnnonce;
+        })
+      );
+      /*setPhotos(
+        photos.filter((photo) => {
+          return photo.annonce === idAnnonce;
+        })
+      );*/
+    });
+  }
 
-    return <div className="ltn__img-slider-area mb-90">
-				<div className="container-fluid">
-				<div className="row ltn__image-slider-5-active slick-arrow-1 slick-arrow-1-inner ltn__no-gutter-all">
-					<div className="col-lg-12">
-					<div className="ltn__img-slide-item-4">
-						<a href={publicUrl+"assets/img/img-slide/31.jpg"} data-rel="lightcase:myCollection">
-						<img src={publicUrl+"assets/img/img-slide/31.jpg"} alt="Image" />
-						</a>
-					</div>
-					</div>
-					<div className="col-lg-12">
-					<div className="ltn__img-slide-item-4">
-						<a href={publicUrl+"assets/img/img-slide/32.jpg"} data-rel="lightcase:myCollection">
-						<img src={publicUrl+"assets/img/img-slide/32.jpg"} alt="Image" />
-						</a>
-					</div>
-					</div>
-					<div className="col-lg-12">
-					<div className="ltn__img-slide-item-4">
-						<a href={publicUrl+"assets/img/img-slide/33.jpg"} data-rel="lightcase:myCollection">
-						<img src={publicUrl+"assets/img/img-slide/33.jpg"} alt="Image" />
-						</a>
-					</div>
-					</div>
-					<div className="col-lg-12">
-					<div className="ltn__img-slide-item-4">
-						<a href={publicUrl+"assets/img/img-slide/34.jpg"} data-rel="lightcase:myCollection">
-						<img src={publicUrl+"assets/img/img-slide/34.jpg"} alt="Image" />
-						</a>
-					</div>
-					</div>
-					<div className="col-lg-12">
-					<div className="ltn__img-slide-item-4">
-						<a href={publicUrl+"assets/img/img-slide/35.jpg"} data-rel="lightcase:myCollection">
-						<img src={publicUrl+"assets/img/img-slide/35.jpg"} alt="Image" />
-						</a>
-					</div>
-					</div>
-				</div>
-				</div>
-			</div>
-        }
+  useEffect(() => {
+    getPhotos(idAnnonce);
+  }, [idAnnonce]);
+
+  return (
+    <div className="ltn__img-slider-area mb-90">
+      {photos.length > 0 ? (
+       // <div className="container-fluid">
+          <div className="row ltn__image-slider-5-active slick-arrow-1 slick-arrow-1-inner ltn__no-gutter-all">
+            {photos.map((item, index) => {
+              return (
+                
+                <div
+                  className="col-lg-12"
+                  style={{ padding: "0.5%", position: "center" }}
+                >
+                  <div className="ltn__img-slide-item-4">
+                    <a href={item.image} data-rel="lightcase:myCollection">
+                      <img
+                        style={{
+                          width: "1904px",
+                          height: "580px",
+                          marginTop: "10px",
+                        }}
+                        src={item.image}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+       // </div>
+      ) : (
+        <div className="container-fluid">
+          <div className="row ltn__image-slider-5-active slick-arrow-1 slick-arrow-1-inner ltn__no-gutter-all"></div>
+          <div
+            className="col-lg-12"
+            style={{ padding: "0.5%", position: "center" }}
+          >
+            <div>
+              <a
+                href={"http://127.0.0.1:8000/media/img/noImg.png"}
+                data-rel="lightcase:myCollection"
+              >
+                <img
+                  style={{
+                    width: "1904px",
+                    height: "580px",
+                    marginTop: "10px",
+                  }}
+                  src={"http://127.0.0.1:8000/media/img/noImg.png"}
+                  alt="Image"
+                />
+              </a>
+            </div>
+          </div>
+         
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default ProductSliderV1
+export default ProductSliderV1;

@@ -1,12 +1,33 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
+import { ToastContainer, toast } from 'react-toastify';
 
-class Checkout extends Component {
 
-    render() {
+function Checkout() {
+
+   
 
         let publicUrl = process.env.PUBLIC_URL+'/'
+		const navigate = useNavigate();
+		let  [profile_account, setProfile] = useState({});
+
+		useEffect(() => {
+			const isAuthenticated = localStorage.getItem("isAuthenticated");
+			if(isAuthenticated){
+				const json = localStorage.getItem("profile1");
+				const profile1 = JSON.parse(json);
+				if (profile1) {
+					console.log('profile1: ', profile1);
+					profile_account=profile1;				
+				}			
+			}
+			else{
+				toast.error("veuillez-vous connecter d'abord à votre compte pour pouvoir y acceder");
+				navigate('/login');
+			}
+
+		},[])
 
     return <div className="ltn__checkout-area mb-105">
 				<div className="container">
@@ -17,7 +38,7 @@ class Checkout extends Component {
 						<h5>Returning customer? <a className="ltn__secondary-color" href="#ltn__returning-customer-login" data-bs-toggle="collapse">Click here to login</a></h5>
 						<div id="ltn__returning-customer-login" className="collapse ltn__checkout-single-content-info">
 							<div className="ltn_coupon-code-form ltn__form-box">
-							<p>Please login your accont.</p>
+							<p>Please login your account.</p>
 							<form action="#">
 								<div className="row">
 								<div className="col-md-6">
@@ -227,7 +248,7 @@ class Checkout extends Component {
 				</div>
 				</div>
 			</div>
-        }
+        
 }
 
 export default Checkout

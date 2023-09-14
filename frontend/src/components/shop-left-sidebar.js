@@ -8,7 +8,8 @@ import Footer from './global-components/footer';
 const ShopLeftSidebarPage = () => {
     return <div>
         <Navbar />
-        <PageHeader headertitle="Shop Left Sidebar" />
+        <PageHeader headertitle="Annonces" />
+        
         <ShopLeftSidebar />
         <CallToActionV1 />
         <Footer />

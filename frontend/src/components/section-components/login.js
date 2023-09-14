@@ -1,12 +1,91 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link,useNavigate, useLocation } from 'react-router-dom';
 import parse from 'html-react-parser';
 
-class Login extends Component {
+//for the sso authentication:
+import { useGoogleLogin, GoogleLogout } from 'react-google-login';
+import { gapi } from 'gapi-script';
+import { toast} from "react-toastify";
+import axios from 'axios';
+import API from "../../API";
+import qs from 'qs';
 
-    render() {
 
-        let publicUrl = process.env.PUBLIC_URL+'/'
+//class Login extends Component 
+function Login(props) {
+
+
+    let publicUrl = process.env.PUBLIC_URL+'/';
+	
+	//const location = useLocation();
+
+
+	let  profile1;
+	const [profile, setprofile] = useState([]);
+	const navigate = useNavigate();
+	const clientId = '918287164878-8mg8s8pth9r2717nnhturhrk27co99ap.apps.googleusercontent.com';
+	const [list, setList ] = useState([]);
+
+	useEffect(() => {
+        const initClient = () => {
+            gapi.client.init({
+                clientId: clientId,
+                scope: ''
+            });
+        };
+        gapi.load('client:auth2', initClient);
+    });
+
+
+	useEffect(() => {
+		console.log('profile email : ', profile.email);
+			list.map((item, index) => {
+				console.log('item: ', item);
+				console.log('profile email : ', profile.email);
+				if (item.email === profile.email){
+					profile1 = item;
+					localStorage.setItem("isAuthenticated", "true");
+					const json = JSON.stringify(profile1);
+  					localStorage.setItem("profile1", json);
+					//setprofile(item);
+					navigate('/my-account');
+				}
+				else{
+					//I need to display an error message in order to inform the user that 
+					//he's not authentified so either he changes the email or he registers.
+					console.log('Veuillez introduire une adresse valide'); 
+				}
+			})
+    },[list] );
+
+
+    const onSuccess = async (res) => {
+		//profile = res.profileObj;
+		setprofile(res.profileObj);
+		
+		console.log('Google Login Name', res.profileObj);
+		
+		API.get(`/users/`).then(res => {
+
+			console.log('profile email: ', profile.email);
+			setList(res.data);
+		})
+		
+	};    
+
+    const onFailure = (res) => {
+    	console.log('Login failed: res:', res);
+    };
+
+	const { signIn } = useGoogleLogin({
+		onSuccess,
+		onFailure,
+		clientId,
+		isSignedIn: true,
+		accessType: 'offline',
+	  });
+
+
 
     return	<div>
 			 <div className="ltn__login-area pb-65">
@@ -14,83 +93,43 @@ class Login extends Component {
 				<div className="row">
 					<div className="col-lg-12">
 					<div className="section-title-area text-center">
-						<h1 className="section-title">Sign In <br />To  Your Account</h1>
-						<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. <br />
-						Sit aliquid,  Non distinctio vel iste.</p>
+						<h1 className="section-title">Connexion</h1>
+						<p>Connectez-vous à votre compte pour une meilleure experience</p>
 					</div>
-					</div>
-				</div>
-				<div className="row">
-					<div className="col-lg-6">
 					<div className="account-login-inner">
-						<form  method="GET" className="ltn__form-box contact-form-box">
-						<input type="text" name="email" placeholder="Email*" />
-						<input type="password" name="password" placeholder="Password*" />
-						<div className="btn-wrapper mt-0">
-							<button className="theme-btn-1 btn btn-block" type="submit">SIGN IN</button>
+								<div className="btn-wrapper go-top" >
+									<div className="account-login-inner text-center pt-50" >
+									
+										<div className="theme-btn-1 btn black-btn  " onClick={signIn} >
+											SE CONNECTER AVEC GOOGLE
+										</div>
+										
+									</div>
+								</div>
 						</div>
-						<div className="go-to-btn mt-20">
-						<a href="#" title="Forgot Password?" data-bs-toggle="modal" data-bs-target="#ltn_forget_password_modal"><small>FORGOTTEN YOUR PASSWORD?</small></a>
-						</div>
-						</form>
 					</div>
-					</div>
-					<div className="col-lg-6">
+					
+				</div>
+				<br/>
+				<div className="row">
+						
+					
+					
 					<div className="account-create text-center pt-50">
-						<h4>DON'T HAVE AN ACCOUNT?</h4>
-						<p>Add items to your wishlistget personalised recommendations <br />
-						check out more quickly track your orders register</p>
+						<h4>VOUS N'AVEZ PAS DE COMPTE?</h4>
+						<p>Créer un compte pour avoir l'accés aux differentes fonctionnalités de cette application</p>
+						<br/>
 						<div className="btn-wrapper go-top">
-							<Link to="/register" className="theme-btn-1 btn black-btn">CREATE ACCOUNT</Link>
+							<Link to="/register" className="theme-btn-1 btn black-btn">CREER UN COMPTE</Link>
 						</div>
 					</div>
-					</div>
+					
 				</div>
 				</div>
-						</div>
-			<div className="ltn__modal-area ltn__add-to-cart-modal-area----">
-			<div className="modal fade" id="ltn_forget_password_modal" tabIndex={-1}>
-				<div className="modal-dialog modal-md" role="document">
-				<div className="modal-content">
-					<div className="modal-header">
-					<button type="button" className="close" data-bs-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">×</span>
-					</button>
-					</div>
-					<div className="modal-body">
-					<div className="ltn__quick-view-modal-inner">
-						<div className="modal-product-item">
-						<div className="row">
-							<div className="col-12">
-							<div className="modal-product-info text-center">
-								<h4>FORGET PASSWORD?</h4>
-								<p className="added-cart"> Enter you register email.</p>
-								<form action="#" className="ltn__form-box">
-								<input type="text" name="email" placeholder="Type your register email*" />
-								<div className="btn-wrapper mt-0">
-									<button className="theme-btn-1 btn btn-full-width-2" type="submit">Submit</button>
-								</div>
-								</form>
-							</div>
-							{/* additional-info */}
-							<div className="additional-info d-none">
-								<p>We want to give you <b>10% discount</b> for your first order, <br />  Use discount code at checkout</p>
-								<div className="payment-method">
-								<img src={publicUrl+"assets/img/icons/payment.png"} alt="#" />
-								</div>
-							</div>
-							</div>
-						</div>
-						</div>
-					</div>
-					</div>
 				</div>
 				</div>
-			</div>
-			</div>
-
-			</div>
-        }
 }
+
+
 
 export default Login

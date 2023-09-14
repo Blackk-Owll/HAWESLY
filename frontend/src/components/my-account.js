@@ -8,7 +8,7 @@ import Footer from './global-components/footer';
 const MyaccountV1 = () => {
     return <div>
         <Navbar />
-        <PageHeader headertitle="My Account" />
+        <PageHeader headertitle="Mon profil" />
         <MyAccount />
         <CallToActionV1 />
         <Footer />

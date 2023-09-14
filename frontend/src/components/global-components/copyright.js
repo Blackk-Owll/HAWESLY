@@ -13,18 +13,10 @@ class CopyRight extends Component {
 				<div className="row">
 				<div className="col-md-6 col-12">
 					<div className="ltn__copyright-design clearfix">
-					<p>All Rights Reserved @ Company <span className="current-year" /></p>
+					<p>All Rights Reserved @esi<span className="current-year" /></p>
 					</div>
 				</div>
-				<div className="col-md-6 col-12 align-self-center">
-					<div className="ltn__copyright-menu text-end">
-					<ul className="go-top">
-						<li><Link to="/about">Terms &amp; Conditions</Link></li>
-						<li><Link to="/about">Claim</Link></li>
-						<li><Link to="/about">Privacy &amp; Policy</Link></li>
-					</ul>
-					</div>
-				</div>
+				
 				</div>
 			</div>
 			</div>

@@ -1,3 +1,4 @@
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import parse from "html-react-parser";
@@ -35,14 +36,15 @@ class BannerV2 extends Component {
                             Annonces immobilières
                           </h6>
                           <h1 className="slide-title animated ">
-                            Chercher dans le <br />
-                            <span> Bon</span> Endroi
+                           Le bon <span>réflexe </span>pour  <br />
+                            bien se loger
                           </h1>
                           <div className="slide-brief animated">
                             <p>
-                              Bosoin d'acheter , louer ou vendre un Immobiler ?
-                              ... Maison , Vila ,appartement, terrain ou
-                              d'autres ? HOUSLY est là pou ça !
+                              Bosoin d'acheter, louer ou vendre un Immobiler ?
+                              <br/>Maison, Villa, Appartement, Terrain ou
+                              autres ? 
+                              <br/>HAWESLY est le meiller étage de l'immobilier!
                             </p>
                           </div>
                           <div className="btn-wrapper animated">
@@ -100,15 +102,16 @@ class BannerV2 extends Component {
                           </h1>
                           <div className="slide-brief animated">
                             <p>
-                              Trouvez des terrains agricoles dans 58 wilayas 
+                              Trouvez des terrains agricoles dans tous les wilayas d'Algerie !  
                             </p>
                           </div>
-                          <div className="btn-wrapper animated">
-                            <Link
-                              to="/service"
+                          <div id="btn-se-connecter" className="btn-wrapper animated">
+                            <Link 
+                              to="/login"
                               className="theme-btn-1 btn btn-effect-1"
                             >
                               SE CONNECTER
+                              
                             </Link>
                             <Link
                               to="/about"
@@ -158,7 +161,7 @@ class BannerV2 extends Component {
                           </h1>
                           <div className="slide-brief animated">
                             <p>
-                              Louer ou acheter des appartements et négocier les prix avec les annonceurs .. 
+                              Louer et acheter des appartements avec bons prix..Toujours la négociation avant l'habitation ! 
                             </p>
                           </div>
                           <div className="btn-wrapper animated">
@@ -212,11 +215,11 @@ class BannerV2 extends Component {
                             Annonces immobilières
                           </h6>
                           <h1 className="slide-title animated ">
-                            Passez des vacances <br /> <spane>merveilleux</spane>
+                            Passez de<span> merveilleux</span> <br /> vacances
                           </h1>
                           <div className="slide-brief animated">
                             <p>
-                              Louer des bangalow pour passer vos vacances n'importe où 
+                              En louant des bangalows dans des endroits exceptionnelles !  
                             </p>
                           </div>
                           <div className="btn-wrapper animated">

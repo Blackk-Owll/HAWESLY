@@ -8,7 +8,7 @@ import Footer from './global-components/footer';
 const RegisterV1 = () => {
     return <div>
         <Navbar />
-        <PageHeader headertitle="Account" subheader="Register" />
+        <PageHeader headertitle="Compte" subheader="S'inscrire" />
         <Register />
         <CallToActionV1 />
         <Footer />

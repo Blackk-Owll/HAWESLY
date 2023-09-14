@@ -1,14 +1,17 @@
-/* Auteur : AMROUCHE Maroua */
-
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import parse from "html-react-parser";
 import { useState, useEffect, useContext } from "react";
-import {refreshAnnonce,getChamps,getAnnoncerAdress,postMessageOffre} from "../../Controllers/detailsController"
-import { toast } from "react-toastify";
+
+import {
+	postMessageOffre,
+  } from "../../functionEnvoiMessage/envoyerMessageOffre";
+import { ToastContainer, toast } from "react-toastify";
 // implementation de la logique de requetes api
 import API from "../../API";
 import { useParams } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function ShopDetails() {
   // recuperer le id de l'annonce et ses details
@@ -26,16 +29,88 @@ function ShopDetails() {
   const [annonceurCommune, setAnnonceurCommune] = useState("");
   const [annonceurId, setAnnonceurId] = useState(0);
 
+  const navigate = useNavigate();
+  let profile;
+	const   [profile_account, setProfile] = useState({});
+
+  function refreshAnnonce() {
+    API.get(`/annonces/${idAnnonce}`).then((res) => {
+      setAnnonce(res.data);
+      console.log("res", res.data);
+    });
+  }
+
   // on recuperer le id passé evec le lien
   let idAnnonce = useParams().id;
 
   // charger l'annonce au chergement de la page
+
   useEffect(() => {
     // recupere l'annonce
-    refreshAnnonce(setAnnonce,idAnnonce);
-    console.log(annonce);
-    
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+			if(isAuthenticated){
+				const json = localStorage.getItem("profile1");
+				const profile1 = JSON.parse(json);
+				if (profile1) {
+					console.log('profile1: ', profile1);
+          profile=profile1;
+          setProfile(profile);
+          refreshAnnonce();
+          console.log(annonce);
+				}			
+			}
+			else{
+        toast.error("Veuillez-vous connecter à votre compte pour pouvoir y accéder!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });					navigate('/login');
+			}
   }, []);
+
+  function getChamps(
+    annonce,
+    setCategorie,
+    setType,
+    setAnnonceur,
+    setWilaya,
+    setCommune
+  ) {
+    if (annonce !== undefined) {
+      console.log("annonce.categories in shop details: ",annonce.categorie ); 
+      console.log("annonce.commune in shop details: ",annonce.commune ); 
+
+      API.get(`/categories/${annonce.categorie}`).then((res) => {
+        setCategorie(res.data.label);
+        // console.log(res.data.label);
+      });
+
+      API.get(`/types/${annonce.type}`).then((res) => {
+        setType(res.data.type);
+        // console.log(res.data.type);
+      });
+      console.log("annonce.wilaya in shop details: ",annonce.wilaya ); 
+      API.get(`/wilayas/${annonce.wilaya}`).then((res) => {
+        console.log("res",res.data.nom);
+        setWilaya(res.data.nom);
+        // console.log(res.data);
+      });
+      console.log("annonce.commune in shop details: ",annonce.commune ); 
+      API.get(`/communes/${annonce.commune}`).then((res) => {
+        setCommune(res.data.nom);
+        // console.log(res.data.nom);
+      });
+
+      // recuperé le propriètaire de l'annocnce
+      API.get(`/users/${annonce.user}`).then((res) => {
+        setAnnonceur(res.data);
+      });
+    }
+  }
 
   // chrger les coordonnée du map  google map
 
@@ -43,62 +118,84 @@ function ShopDetails() {
     const iframeData = document.getElementById("map");
     const lat = annonce.mapX;
     const lon = annonce.mapY;
-    const zoom = annonce.zoom;
 
-    iframeData.src = `https://maps.google.com/maps?q=${lat},${lon}&hl=es&z=${zoom}&amp;&output=embed`;
+    iframeData.src = `https://maps.google.com/maps?q=${lat},${lon}&hl=es&z=20&amp;&output=embed`;
     console.log(iframeData.src);
   }
 
   // charger la localisation de l'Annonce
   useEffect(() => {
     chargerMap();
-
   }, [annonce]);
 
-// recuperer les photos de l'annonce
-const [photos, setPhotos]=useState([]);
-function getPhotos(idAnnonce){
-  API.get(`/photos/`).then((res) => {
-    console.log(res.data);
-    setPhotos(res.data);
-  });
-}
-
+  // recuperer les photos de l'annonce
+  const [photos, setPhotos] = useState([]);
+  function getPhotos(idAnnonce) {
+    API.get(`/photos/`).then((res) => {
+      console.log(res.data);
+      setPhotos(res.data);
+    });
+  }
 
   // recupere les chemps ( clés etrangères ) externe en texte
 
   useEffect(() => {
-   getChamps(annonce,setCategorie,setType,setAnnonceur,setWilaya,setCommune);
+    getChamps(
+      annonce,
+      setCategorie,
+      setType,
+      setAnnonceur,
+      setWilaya,
+      setCommune
+    );
     getPhotos(idAnnonce);
   }, [annonce]);
+/*
+  function getAnnoncerAdress() {
+    console.log("annonceur,annonceur", annonceur);
+    console.log("annonceur.wilaya ", annonceur.wilaya);
+    API.get(`/wilayas/${annonceur.wilaya}`).then((res) => {
+      setAnnonceurWilaya(res.data.nom);
+    });
 
-
-
-  
-
+    API.get(`/communes/${annonceur.commune}`).then((res) => {
+      setAnnonceurCommune(res.data.nom);
+      setAnnonceurId(annonceur.annonceurId);
+    });
+  }
+*/
   // charger l'asresse de l'annonceur
-
+/*
   useEffect(() => {
-   getAnnoncerAdress(annonceur,setAnnonceurWilaya,setAnnonceurCommune,setAnnonceurId)
+    getAnnoncerAdress(
+      annonceur,
+      //setAnnonceurWilaya,
+      setAnnonceurCommune,
+      setAnnonceurId
+    );
   }, [annonceur]);
-  
-
-
-
+*/
   //--------- envois des messsage d'offre
   const [contenu, setContenu] = useState("");
   const [messageOffre, setMessageOffre] = useState({});
 
-  
-  function envoieMessage (e) {
+  function envoieMessage(e) {
     e.preventDefault();
     // l'emetteur sera l'utilisateur authentifié
-    let emetteur = 1;
+    let emetteur = profile_account.userId;
     /*********************** */
-    postMessageOffre(contenu,idAnnonce,emetteur);
-    toast.success("Message d'offre envoyé avec succès !");
-
-      }
+    console.log(" avant appel ");
+    postMessageOffre(contenu, idAnnonce, emetteur, annonceur.userId);
+    toast.success("Message d'offre envoyé avec succès !", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
 
   return (
     <div className="ltn__shop-details-area pb-10">
@@ -141,7 +238,7 @@ function getPhotos(idAnnonce){
               <div className="property-detail-info-list section-bg-1 clearfix mb-60">
                 <ul>
                   <li>
-                    <label>ID :</label> <span>{annonce.annonceId}</span>
+                    <label>Titre :</label> <span>{annonce.titre}</span>
                   </li>
                   <li>
                     <label>Surface: </label> <span>{annonce.surface} m²</span>
@@ -438,199 +535,12 @@ function getPhotos(idAnnonce){
                       >
                         Envoyer
                       </button>
+                      <ToastContainer/>
                     </div>
                   </form>
                 </div>
               </div>
-              <h4 className="title-2"> peut être interessant </h4>
-              <div className="row">
-                {/* ltn__product-item */}
-                <div className="col-xl-6 col-sm-6 col-12 go-top">
-                  <div className="ltn__product-item ltn__product-item-4 ltn__product-item-5 text-center---">
-                    <div className="product-img">
-                      <Link to="/shop">
-                        <img
-                          src={publicUrl + "assets/img/product-3/1.jpg"}
-                          alt="#"
-                        />
-                      </Link>
-                      <div className="real-estate-agent">
-                        <div className="agent-img">
-                          <Link to="/team-details">
-                            <img
-                              src={publicUrl + "assets/img/blog/author.jpg"}
-                              alt="#"
-                            />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-badge">
-                        <ul>
-                          <li className="sale-badg">For Rent</li>
-                        </ul>
-                      </div>
-                      <h2 className="product-title">
-                        <Link to="/shop">New Apartment Nice View</Link>
-                      </h2>
-                      <div className="product-img-location">
-                        <ul>
-                          <li>
-                            <Link to="/shop">
-                              <i className="flaticon-pin" /> Belmont Gardens,
-                              Chicago
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <ul className="ltn__list-item-2--- ltn__list-item-2-before--- ltn__plot-brief">
-                        <li>
-                          <span>3 </span>
-                          Bedrooms
-                        </li>
-                        <li>
-                          <span>2 </span>
-                          Bathrooms
-                        </li>
-                        <li>
-                          <span>3450 </span>
-                          square Ft
-                        </li>
-                      </ul>
-                      <div className="product-hover-action">
-                        <ul>
-                          <li>
-                            <a
-                              href="#"
-                              title="Quick View"
-                              data-bs-toggle="modal"
-                              data-bs-target="#quick_view_modal"
-                            >
-                              <i className="flaticon-expand" />
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              title="Wishlist"
-                              data-bs-toggle="modal"
-                              data-bs-target="#liton_wishlist_modal"
-                            >
-                              <i className="flaticon-heart-1" />
-                            </a>
-                          </li>
-                          <li>
-                            <Link to="/shop" title="Compare">
-                              <i className="flaticon-add" />
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="product-info-bottom">
-                      <div className="product-price">
-                        <span>
-                          $349,00<label>/Month</label>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* ltn__product-item */}
-                <div className="col-xl-6 col-sm-6 col-12 go-top">
-                  <div className="ltn__product-item ltn__product-item-4 ltn__product-item-5 text-center---">
-                    <div className="product-img">
-                      <Link to="/shop">
-                        <img
-                          src={publicUrl + "assets/img/product-3/2.jpg"}
-                          alt="#"
-                        />
-                      </Link>
-                      <div className="real-estate-agent">
-                        <div className="agent-img">
-                          <Link to="/team-details">
-                            <img
-                              src={publicUrl + "assets/img/blog/author.jpg"}
-                              alt="#"
-                            />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-badge">
-                        <ul>
-                          <li className="sale-badg">For Sale</li>
-                        </ul>
-                      </div>
-                      <h2 className="product-title">
-                        <Link to="/shop">New Apartment Nice View</Link>
-                      </h2>
-                      <div className="product-img-location">
-                        <ul>
-                          <li>
-                            <Link to="/shop">
-                              <i className="flaticon-pin" /> Belmont Gardens,
-                              Chicago
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <ul className="ltn__list-item-2--- ltn__list-item-2-before--- ltn__plot-brief">
-                        <li>
-                          <span>3 </span>
-                          Bedrooms
-                        </li>
-                        <li>
-                          <span>2 </span>
-                          Bathrooms
-                        </li>
-                        <li>
-                          <span>3450 </span>
-                          square Ft
-                        </li>
-                      </ul>
-                      <div className="product-hover-action">
-                        <ul>
-                          <li>
-                            <a
-                              href="#"
-                              title="Quick View"
-                              data-bs-toggle="modal"
-                              data-bs-target="#quick_view_modal"
-                            >
-                              <i className="flaticon-expand" />
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              title="Wishlist"
-                              data-bs-toggle="modal"
-                              data-bs-target="#liton_wishlist_modal"
-                            >
-                              <i className="flaticon-heart-1" />
-                            </a>
-                          </li>
-                          <li>
-                            <a href="portfolio-details.html" title="Compare">
-                              <i className="flaticon-add" />
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="product-info-bottom">
-                      <div className="product-price">
-                        <span>
-                          $349,00<label>/Month</label>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           </div>
           <div className="col-lg-4">
@@ -639,7 +549,7 @@ function getPhotos(idAnnonce){
               <h4 className="title-2">Contactez le propriétaire</h4>
               <div className="widget ltn__author-widget">
                 <div className="ltn__author-widget-inner text-center">
-                  <img src={publicUrl + "assets/img/team/4.jpg"} alt="Image" />
+                  <img src={publicUrl + "assets/img/user/author.jpg"} alt="Image" />
                   <h5>
                     {" "}
                     {annonceur.nom} {annonceur.prenom}{" "}
@@ -690,9 +600,9 @@ function getPhotos(idAnnonce){
                             <i className="icon-mail" />
                           </span>
 
-                          <a href={`mailto:` + annonceur.email}>
+                          <a href={`mailto: ` + annonceur.email}>
                             {"  "}
-                            {annonceur.email}
+                            { " "+ annonceur.email}
                           </a>
                         </label>
                       </li>
@@ -705,7 +615,7 @@ function getPhotos(idAnnonce){
                             </span>
                             {"  "}
                             <a href={"tel:?" + annonceur.phone}>
-                              {" :" + " 0" + annonceur.phone}
+                              { "  0" + annonceur.phone}
                             </a>
                           </p>
                         </label>
@@ -719,15 +629,11 @@ function getPhotos(idAnnonce){
                             <a
                               href={
                                 "https://www.google.com/maps?q=" +
-                                annonceurWilaya +
-                                "," +
-                                annonceurCommune +
-                                "," +
+                                
                                 annonceur.adresse
                               }
                             >
-                              {"  "}
-                              {annonceurWilaya} , {" " + annonceurCommune} ,{" "}
+                              
                               {" " + annonceur.adresse}{" "}
                             </a>
                           </p>

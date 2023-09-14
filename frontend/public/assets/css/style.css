@@ -63,6 +63,7 @@ font-family: 'Nunito Sans', sans-serif;
 font-family: 'Titillium Web', sans-serif;
 */
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
 /*
 font-family: 'Nunito Sans', sans-serif;
 font-family: 'Poppins', sans-serif;
@@ -155,6 +156,7 @@ font-family: 'Poppins', sans-serif;
   padding-left: 15px;
   position: relative;
 }
+
 
 .ltn__no-gutter > [class*="col-"] {
   /* No padding only for child columns */
@@ -5030,7 +5032,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 /* ----------------------------------------------------
     Footer About Widget
 ---------------------------------------------------- */
-@media (min-width: 992px) {
+@media (min-width: 800px) {
   .footer-about-widget {
     padding-right: 35px;
   }
@@ -17385,12 +17387,12 @@ input.cart-plus-minus-box {
     Footer Area
 -------------------------*/
 .footer-top-area {
-  padding-top: 92px;
-  padding-bottom: 20px;
+  padding-top: 50px;
+  padding-bottom: 1px;
 }
 
 .footer-widget {
-  margin-bottom: 60px;
+  margin-bottom: 10px;
 }
 
 .footer-logo {

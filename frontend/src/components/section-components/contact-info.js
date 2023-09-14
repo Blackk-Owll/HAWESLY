@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import parse from 'html-react-parser';
+import React, { Component, useEffect, useState} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
-class ContactInfo extends Component {
 
-    render() {
+function ContactInfo() {
+
+  
+
+		
 
         let publicUrl = process.env.PUBLIC_URL+'/'
 
@@ -16,9 +19,9 @@ class ContactInfo extends Component {
 						<div className="ltn__contact-address-icon">
 						<img src={publicUrl+"assets/img/icons/10.png"} alt="Icon Image" />
 						</div>
-						<h3>Email Address</h3>
-						<p>info@webmail.com <br />
-						jobs@webexample.com</p>
+						<h3>Adresse-mail</h3>
+						<p>service@esi.dz<br /> web@esi.dz</p>
+					
 					</div>
 					</div>
 					<div className="col-lg-4">
@@ -26,8 +29,8 @@ class ContactInfo extends Component {
 						<div className="ltn__contact-address-icon">
 						<img src={publicUrl+"assets/img/icons/11.png"} alt="Icon Image" />
 						</div>
-						<h3>Phone Number</h3>
-						<p>+0123-456789 <br /> +987-6543210</p>
+						<h3>Numéro de téléphone</h3>
+						<p>023567632<br /> 0661237873</p>
 					</div>
 					</div>
 					<div className="col-lg-4">
@@ -35,15 +38,15 @@ class ContactInfo extends Component {
 						<div className="ltn__contact-address-icon">
 						<img src={publicUrl+"assets/img/icons/12.png"} alt="Icon Image" />
 						</div>
-						<h3>Office Address</h3>
-						<p>18/A, New Born Town Hall <br />
-						New York, US</p>
+						<h3>Adresse</h3>
+						<p>Oued Smar 16309<br />
+						Alger,Algérie</p>
 					</div>
 					</div>
 				</div>
 				</div>
 			</div>
-        }
+        
 }
 
 export default ContactInfo

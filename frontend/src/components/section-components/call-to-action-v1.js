@@ -14,12 +14,12 @@ class CallToActonV1 extends Component {
 			    <div className="row">
 			      <div className="col-lg-12">
 			        <div className="call-to-action-inner call-to-action-inner-6 ltn__secondary-bg position-relative text-center---">
-			          <div className="coll-to-info text-color-white" style={{position:"center"}}>
-			            <h1> Pas encore satisfait  ?</h1>
-			            <p>C'est facile , explorer plus d'onnance et trouvez vos attentes </p>
+			          <div className="coll-to-info text-color-white">
+			            <h1>Vous cherchez la maison de vos rèves ?</h1>
+			            <p>Nous pourrions réaliser cela !</p>
 			          </div>
 			          <div className="btn-wrapper go-top">
-			            <Link className="btn btn-effect-3 btn-white" to="/shop-grid">Explorer les annances  <i className="icon-next" /></Link>
+			            <Link className="btn btn-effect-3 btn-white" to="/contact">Contactez-nous<i className="icon-next" /></Link>
 			          </div>
 			        </div>
 			      </div>

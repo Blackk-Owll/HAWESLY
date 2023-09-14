@@ -6,13 +6,15 @@ import ProductDetails from './shop-components/shop-details';
 import CallToActionV1 from './section-components/call-to-action-v1';
 import Footer from './global-components/footer';
 
+import { useParams } from 'react-router-dom';
 
 
 // iport useCintext to run to pass params throw components 
 
 const Product_Details = () => {
 
-    /*cette page vas contenir les details d'une annonce  */
+    
+
 
     return <div>
         <Navbar />
@@ -25,4 +27,3 @@ const Product_Details = () => {
 }
 
 export default Product_Details
-

@@ -8,7 +8,7 @@ import Footer from './global-components/footer';
 const LoginV1 = () => {
     return <div>
         <Navbar />
-        <PageHeader headertitle="Account" subheader="Login" />
+        <PageHeader headertitle="Compte" subheader="Se connecter" />
         <Login />
         <CallToActionV1 />
         <Footer />

@@ -1,2 +1,3 @@
-# TP_IGL
-application web pour les annonces des biens immobilières avec react et django
+# HAWESLY
+Plateforme conviviale pour administrateurs et clients. Créez, trouvez, contactez, et gérez des annonces immobilières en un clin d'œil. Simplifiez vos transactions immobilières avec Hawesly.
+
